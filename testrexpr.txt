@@ -1,0 +1,19 @@
+program
+
+int x;
+const int y;
+
+begin
+
+x+3.5 > 5; 
+x+y<66;
+x+5 < 3.6;
+x==y;
+x>=true;
+x==5;
+x==z;
+x!=y;
+x!= 5+3;
+x==true;
+y==false;
+end

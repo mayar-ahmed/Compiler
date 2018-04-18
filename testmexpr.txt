@@ -1,0 +1,20 @@
+program
+
+int x;
+const int y;
+
+begin
+
+x; 
+y;
+5;
+
+y+ 3;
+
+3+4 + 5*y ;
+((5+y) +3+z +4);
+_mayar_23;
+3.4;
+3.55 + x +(y *z); 
+
+end

@@ -1,30 +1,9 @@
 program
-int x;
-const int y;
-const bool z;
-float m;
 
 begin
+x = x+3;
+x = x-3;
+x-3>y;
+x-3==true;
 
-x=y;
-x=x+y;
-x+3.5 > 5; 
-x+y<66;
-x+5 < 3.6;
-x==y;
-x>=y;
-x>=55.6;
-x<=12;
-y<=22;
-x!=y;
-x!=z;
-x==5;
-x==z;
-x!=y;
-x!= 5+3;
-true;
-false;
-
-x== 8+4;
-x>y;
 end

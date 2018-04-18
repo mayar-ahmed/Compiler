@@ -96,7 +96,7 @@ statements:
           | statements statement ENDL
           ;
           
-statement: assignment {cout <<"math expression statemet  found" <<endl;}
+statement: assignment {cout <<"assignemt" <<endl;}
         /*| if_stmt 
         | while_stsmt
         | do_while_stmt
@@ -111,9 +111,9 @@ assignment: /*IDENTIFIER ASSIGN mexpr*/ rexp
 
 
 /* definition of mathematical expression */
-number: FNUM  
-      | INUM  
-    ; 
+pnum: FNUM | INUM;
+nnum: MINUS FNUM | MINUS INUM; 
+number: pnum | nnum;
 
 factor : LB mexpr RB     
         | number         

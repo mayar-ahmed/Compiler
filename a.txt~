@@ -8,9 +8,6 @@ begin
 
 x=y;
 x=x+y;
-x==true;
-x+y>z;
-
 x+3.5 > 5; 
 x+y<66;
 x+5 < 3.6;

@@ -1,0 +1,146 @@
+program
+
+int x;
+int y;
+
+begin
+
+y = x+3;
+x= x + x-3;
+c=x-3>y;
+v=x-3==true;
+c= ( x and y) and z;
+c=true;
+v= false;
+c = x and y;
+c=3.5;
+
+x=-5;
+x = 5-3;
+t =((x+ 5) > 3) and y;
+m = 4--0.5;
+
+if (x) then
+    y = x+5;
+    z= false;
+    z= z +1;
+endif;
+
+if ( x==5 ) then
+    x=5;
+    y=true;
+    z=25+7;
+    m=3.55 and 7;
+endif;
+
+
+if ( x==true ) then
+    x=6;
+endif;
+
+
+
+do {
+    
+    x=false;
+    x= x+3;
+    } while ( y ==false);
+
+
+while (x> 5) {
+
+x=5;
+break;
+};
+
+switch ( x) {
+    case 5: 
+        x=5;
+        x=8 +10;
+        break;
+        
+    case -6:
+        y=true;
+        break;
+        
+    case 3:
+        break;
+    
+};
+
+switch ( x) {
+    default:
+        x=5;
+    
+};
+
+switch (x) { 
+    case 5: 
+        x=5;
+        x=8 +10;
+        break;
+        
+    case -6:
+        y=true;
+        break;
+        
+    case 3:
+        break;
+        
+    default: 
+        x=5;
+};
+        
+for x = 3 : 10 : inc {
+break;
+};
+
+for x = 3.5 : -10 : inc {
+break;
+};
+
+
+
+
+switch (x) { 
+    case 5: 
+        x=5;
+        x=8 +10;
+        break;
+        
+    case -6:
+        y=true;
+        continue;
+        break;
+        
+    case 3:
+        break;
+        
+    default: 
+        x=5;
+
+};
+
+while (x <5) {
+    x=4;
+    continue;
+    };
+
+while ( x ==true ) 
+{
+    x=5;
+    y=z+7;
+    x=9;
+    x= not y;
+
+
+
+if (x+5)) then
+    x=5;
+    else
+    c=6;
+endif;
+
+9=3;
+
+end

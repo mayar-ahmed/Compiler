@@ -14,13 +14,13 @@ digit [0-9]
 letter [a-zA-Z0-9_]
 
 %% 
-and           {cout<<"AND"<<endl; return  AND;}
-not           {cout<<"NOT"<<endl; return NOT;}
-or            {cout<<"OR"<<endl; return OR;}
-do            {cout<<"DO"<<endl; return DO;}
-if            {cout<<"IF"<<endl; return IF;}
-while         {cout<<"WHILE"<<endl; return WHILE;}
-then          {cout<<"THEN"<<endl; return THEN;}
+and           {/*cout<<"AND"<<endl;*/ return  AND;}
+not           {/*cout<<"NOT"<<endl;*/ return NOT;}
+or            {/*cout<<"OR"<<endl;*/ return OR;}
+do            {/*cout<<"DO"<<endl;*/ return DO;}
+if            {/*cout<<"IF"<<endl;*/ return IF;}
+while         {/*cout<<"WHILE"<<endl;*/ return WHILE;}
+then          {/*cout<<"THEN"<<endl;*/ return THEN;}
 else          { return ELSE;}
 switch        { return SWITCH;}
 case          { return CASE;}
@@ -31,40 +31,40 @@ for           { return FOR;}
 endif         { return ENDIF;}
 inc           { return INC;}
 dec           { return DEC;}
-true          {cout<<"TRUE"<<endl; yylval.bval=true; cout<<"Val: "<<yylval.bval<<endl; return TRUE;}
-false         {cout<<"FALSE"<<endl; yylval.bval=false; return FALSE; }
+true          {/*cout<<"TRUE"<<endl;*/ yylval.bval=true; /*cout<<"Val: "<<yylval.bval<<endl;*/ return TRUE;}
+false         {/*cout<<"FALSE"<<endl;*/ yylval.bval=false; return FALSE; }
 
-program       {cout<<"PROGRAM"<<endl;return  PROGRAM;}
-begin         {cout<<"BEGIN"<<endl;return  S;}
-end           {cout<<"END"<<endl;return  END;}
-int           {cout<<"INT\n";yylval.ival=atoi(yytext);cout<<"IVal:"<<yylval.ival<<endl; return  INT;}
-float         {cout<<"FLOAT\n";yylval.fval=atof(yytext);cout<<"FVal:"<<yylval.fval<<endl;return  FLOAT;}
-bool          {cout<<"BOOL"<<endl;return  BOOL;}
-const         {cout<<"CONST"<<endl;return  CONST;}
+program       {/*cout<<"PROGRAM"<<endl;*/return  PROGRAM;}
+begin         {/*cout<<"BEGIN"<<endl;*/return  S;}
+end           {/*cout<<"END"<<endl;*/return  END;}
+int           {/*cout<<"INT\n";*/yylval.ival=atoi(yytext);/*cout<<"IVal:"<<yylval.ival<<endl;*/ return  INT;}
+float         {/*cout<<"FLOAT\n";*/yylval.fval=atof(yytext);/*cout<<"FVal:"<<yylval.fval<<endl;*/return  FLOAT;}
+bool          {/*cout<<"BOOL"<<endl;*/return  BOOL;}
+const         {/*cout<<"CONST"<<endl;*/return  CONST;}
 
-"="             {cout<<"ASSIGN"<<endl;return  ASSIGN;}
-"+"             {cout<<"PLUS"<<endl;return  PLUS;}
-"-"             {cout<<"MINUS"<<endl; return  MINUS;}
-"*"             {cout<<"MUL"<<endl; return  MUL;}
-"/"             {cout<<"DIV"<<endl; return  DIV;}
-"("             {cout<<"("<<endl; return  LB;}
-")"             {cout<<")"<<endl;return  RB;}
-"<"             {cout<<"<"<<endl;return  LT;}
-">"             {cout<<">"<<endl;return  GT;}
-"=="            {cout<<"=="<<endl;return  EQ;}
-"<="            {cout<<"<="<<endl;return  LTE;}
-">="            {cout<<">="<<endl;return  GTE;}
-"!="            {cout<<"!="<<endl;return  NE; }
-":"             {cout<<":"<<endl;return  COLON;}
-"{"             {cout<<"{"<<endl;return LC;}
-"}"             {cout<<"}"<<endl;return RC;}
+"="             {/*cout<<"ASSIGN"<<endl;*/return  ASSIGN;}
+"+"             {/*cout<<"PLUS"<<endl;*/return  PLUS;}
+"-"             {/*cout<<"MINUS"<<endl;*/ return  MINUS;}
+"*"             {/*cout<<"MUL"<<endl;*/ return  MUL;}
+"/"             {/*cout<<"DIV"<<endl;*/ return  DIV;}
+"("             {/*cout<<"("<<endl;*/ return  LB;}
+")"             {/*cout<<")"<<endl;*/return  RB;}
+"<"             {/*cout<<"<"<<endl;*/return  LT;}
+">"             {/*cout<<">"<<endl;*/return  GT;}
+"=="            {/*cout<<"=="<<endl;*/return  EQ;}
+"<="            {/*cout<<"<="<<endl;*/return  LTE;}
+">="            {/*cout<<">="<<endl;*/return  GTE;}
+"!="            {/*cout<<"!="<<endl;*/return  NE; }
+":"             {/*cout<<":"<<endl;*/return  COLON;}
+"{"             {/*cout<<"{"<<endl;*/return LC;}
+"}"             {/*cout<<"}"<<endl;*/return RC;}
 
 
 [ \t]           ; //ignore spaces, tabs and new line
 [\n]		{++line;}
-[0-9]+\.?[0-9]+	  {  cout<<"float : " <<atof(yytext) <<endl; yylval.fval = atof(yytext); return  FNUM; }
-{digit}+            {  cout<<"integer : " <<atoi(yytext) <<endl; yylval.ival = atoi(yytext); return  INUM; }
-{letter}({letter}|{digit})*     {cout<<"identifier : " <<strdup(yytext) <<endl;   yylval.sval = strdup(yytext);return  IDENTIFIER;}
+[0-9]+\.?[0-9]+	  {  /*cout<<"float : " <<atof(yytext) <<endl;*/ yylval.fval = atof(yytext); return  FNUM; }
+{digit}+            {  /*cout<<"integer : " <<atoi(yytext) <<endl;*/ yylval.ival = atoi(yytext); return  INUM; }
+{letter}({letter}|{digit})*     {/*cout<<"identifier : " <<strdup(yytext) <<endl;*/   yylval.sval = strdup(yytext);return  IDENTIFIER;}
 ;               {return  ENDL;}
 
 

@@ -112,6 +112,8 @@ statement: assignment {cout <<"assignemt statemet" <<endl;}
         | do_while_stmt {cout <<"do while loop" <<endl;}
         | for_stmt  { cout << "for loop" ;}
         |switch_stmt    {cout <<"switch statemet" <<endl;}
+        |BREAK          {cout <<" break statement" <<endl;}
+        |CONTINUE  {cout <<" cntinue statement" <<endl;}
         ;
         
 
@@ -157,24 +159,19 @@ if_stmt: IF LB expr RB THEN statements ENDIF /*{ cout << "if then endif "<<endl;
         ;
         
         
-/*  define statements with break and continue in while and for loop */
-l_statements : 
-            | l_statements l_stmt ENDL
-            ;
 
-l_stmt: statement | BREAK | CONTINUE;
+while_stsmt: WHILE LB expr RB LC statements RC ;
 
-while_stsmt: WHILE LB expr RB LC l_statements RC ;
-
-do_while_stmt:DO LC l_statements RC WHILE LB expr RB;
+do_while_stmt:DO LC statements RC WHILE LB expr RB;
 
 
 /*  switch case definition*/
 pint : INUM | MINUS INUM;
 
 s_stmt: cases default | cases;
-case: CASE pint COLON statements BREAK ; 
-cases:  | cases case ENDL;
+
+case: CASE pint COLON statements; 
+cases:  | cases case;
 default: DEFAULT COLON statements ;
 
 switch_stmt: SWITCH LB IDENTIFIER RB  LC s_stmt RC ;
@@ -182,10 +179,9 @@ switch_stmt: SWITCH LB IDENTIFIER RB  LC s_stmt RC ;
 
 ///////////////////////////////////////////////////////////
 
-/*  increment or decrement*/ 
-order: INC  | DEC;
+
 /* needs modification to make sure it's correct */
-for_stmt: FOR IDENTIFIER  ASSIGN expr COLON expr COLON order LC l_statements RC; 
+for_stmt: FOR LB IDENTIFIER  ASSIGN expr COLON expr COLON number RB LC statements RC; 
 
         
 /* old definition of expression */
@@ -210,7 +206,7 @@ mexpr: mexpr PLUS term
 
 int main(int, char**) {
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("b.txt", "r");
+	FILE *myfile = fopen("a.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;

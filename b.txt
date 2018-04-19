@@ -46,6 +46,7 @@ do {
     x= x+3;
     } while ( y ==false);
 
+y=false;
 
 while (x> 5) {
 
@@ -53,18 +54,20 @@ x=5;
 break;
 };
 
+
 switch ( x) {
     case 5: 
         x=5;
         x=8 +10;
         break;
         
-    case -6:
+    case 9:
         y=true;
         break;
         
     case 3:
         break;
+        
     
 };
 
@@ -91,15 +94,16 @@ switch (x) {
         x=5;
 };
         
-for x = 3 : 10 : inc {
+for x = 3 : 10 : -10 {
 break;
 };
 
-for x = 3.5 : -10 : inc {
+for x = 3.5 : -10 : 25 {
 break;
 };
 
 
+break;
 
 
 switch (x) { 

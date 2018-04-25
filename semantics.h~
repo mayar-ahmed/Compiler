@@ -1,0 +1,26 @@
+#pragma once
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include<map>
+using namespace std;
+//extern map<char*,symbolData> symbolTable;
+struct symbolData{
+char*val;
+int type,cl,used;
+};
+//Expressions
+struct exptype{
+int type;	//int, float or bool
+int id;		//1-> identifier, 0-> number or boolean value  
+char* val;	//Value
+char* name;	//name of identifier
+};
+/*
+//Create an expression
+exptype*createExpr(int i, char* c, int id1, char*n);
+//Convert number to char*
+char*f(float n);
+//Check semantics for assignment statement
+void checkAssign(char*,exptype*);
+*/

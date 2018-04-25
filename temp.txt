@@ -1,0 +1,10 @@
+program
+bool x;
+float z;
+int y;
+float l;
+
+begin
+y = (-5 + 10) * -2;
+x=true;
+end

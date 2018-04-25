@@ -62,8 +62,8 @@ const         {/*cout<<"CONST"<<endl;*/return  CONST;}
 
 [ \t]           ; //ignore spaces, tabs and new line
 [\n]		{++line;}
-[0-9]+\.?[0-9]+	  {  /*cout<<"float : " <<atof(yytext) <<endl;*/ yylval.fval = atof(yytext); return  FNUM; }
 {digit}+            {  /*cout<<"integer : " <<atoi(yytext) <<endl;*/ yylval.ival = atoi(yytext); return  INUM; }
+[0-9]+\.?[0-9]+	  {  /*cout<<"float : " <<atof(yytext) <<endl;*/ yylval.fval = atof(yytext); return  FNUM; }
 {letter}({letter}|{digit})*     {/*cout<<"identifier : " <<strdup(yytext) <<endl;*/   yylval.sval = strdup(yytext);return  IDENTIFIER;}
 ;               {return  ENDL;}
 

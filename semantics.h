@@ -40,3 +40,5 @@ bool invalidExpressions(exptype*e1,exptype*e2);
 exptype*checkLogical(exptype*e1,char*op,exptype*e2);
 bool logical(bool x1, char*op,bool x2);
 void checkCond(exptype*);
+void checkBreak();
+void checkContinue();

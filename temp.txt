@@ -4,10 +4,14 @@ int i2;
 float f;
 
 begin
-i=0.1;
+continue;
+f=0.5;
 i2=2;
-while(i+i2){
+do{
 i2=i2-1;
-};
+if(i2>1) then
+continue;	
+endif;
+}while(i2>i2);
 
 end

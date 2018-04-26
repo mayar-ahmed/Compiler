@@ -11,6 +11,7 @@ extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" FILE *yyin;
 extern int line;
+int lCount,sCount;
 void yyerror(const char *s);
 
 struct cmp_str
@@ -129,14 +130,14 @@ statements:
           | statements statement ENDL
           ;
           
-statement: assignment {cout <<line<<": assignemt statemet" <<endl;}
-        | if_stmt    {cout <<line<<": if statemet" <<endl;}
-        | while_stsmt  {cout <<"while loop " <<endl;}
-        | do_while_stmt {cout <<"do while loop" <<endl;}
-        | for_stmt  { cout << "for loop" ;}
+statement: assignment	{cout <<line<<": assignemt statemet" <<endl;}
+        |if_stmt	{cout <<line<<": if statemet" <<endl;}
+        |while_stsmt 	{cout <<"while loop " <<endl;}
+        |do_while_stmt	{cout <<"do while loop" <<endl;}
+        |for_stmt 	{cout << "for loop" ;}
         |switch_stmt    {cout <<"switch statemet" <<endl;}
-        |BREAK          {cout <<" break statement" <<endl;}
-        |CONTINUE  {cout <<" cntinue statement" <<endl;}
+        |BREAK          {checkBreak();cout <<" break statement" <<endl;}
+        |CONTINUE  	{checkContinue();cout <<" cntinue statement" <<endl;}
         ;
         
 
@@ -188,16 +189,18 @@ expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);}
     | NOT expr		{$$ = checkLogical(NULL,(char*)"!",$2);}
     | LB expr RB	{$$=$2;}
     ;
-
-if_stmt: IF LB expr RB THEN statements ENDIF /*{ cout << "if then endif "<<endl;}*/
-        | IF LB expr RB THEN statements ELSE statements ENDIF /*{ cout<< "if then else statement"<<endl;}*/
+/*
+if_stmt: IF LB expr RB THEN statements ENDIF 
+        | IF LB expr RB THEN statements ELSE statements ENDIF
         ;
-        
-        
+  */      
+if_: IF LB expr{checkCond($3);} RB THEN statements;
+if_else:ENDIF|ELSE statements ENDIF;
+if_stmt:if_ if_else;        
 
-while_stsmt: WHILE LB expr {checkCond($3);} RB LC statements RC ;
+while_stsmt: WHILE LB expr {checkCond($3);} RB LC{lCount++;} statements RC{lCount--;};
 
-do_while_stmt:DO LC statements RC WHILE LB expr RB;
+do_while_stmt:DO LC{lCount++;} statements RC{lCount--;} WHILE LB expr{checkCond($9);}RB;
 
 
 /*  switch case definition*/
@@ -209,7 +212,7 @@ case: CASE pint COLON statements;
 cases:  | cases case;
 default: DEFAULT COLON statements ;
 
-switch_stmt: SWITCH LB IDENTIFIER RB  LC s_stmt RC ;
+switch_stmt: SWITCH LB IDENTIFIER RB  LC{sCount++;} s_stmt RC{sCount--;} ;
 
 
 ///////////////////////////////////////////////////////////
@@ -240,6 +243,8 @@ mexpr: mexpr PLUS term
 //end of grammar
 
 int main(int, char**) {
+	//Loops =0, Switch cases=0
+	lCount=0;sCount=0;
 	//initialize types map
 	types[0]= (char*)"unknown";
 	types[1]= (char*)"int"; 
@@ -308,6 +313,16 @@ bool isInit(char*id){
 return symbolTable[id]->val!=NULL;
 }
 
+void checkBreak(){
+if(lCount == 0 && sCount==0){
+printf("Semantic ERROR line: %d :: Break statement not within loop or switch case \n",line);
+}
+}
+void checkContinue(){
+if(lCount == 0){
+printf("Semantic ERROR line: %d :: Continue statement not within loop \n",line);
+}
+}
 
 // Constant declaration
 void addConst(char*id, int t1,char* val, int t2){
@@ -724,8 +739,9 @@ t->name=NULL;
 t->id=0;
 }
 void checkCond(exptype*e){
-cout<<"Type: "<<e->type<<endl;
-
+if(e->type!=3){
+printf("Semantic ERROR line: %d :: Condition must have a bool value \n",line);
+}
 }
 bool logical(bool x1, char*op,bool x2){
 if(op == "&")

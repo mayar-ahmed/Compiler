@@ -4,7 +4,7 @@ int i2;
 float f;
 
 begin
-i=1;
+i=0.1;
 i2=2;
 while(i+i2){
 i2=i2-1;

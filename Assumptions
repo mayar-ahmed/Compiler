@@ -1,14 +1,3 @@
-Constants:
-==========
-Multiple declarations: only first is saved, others don't exist
-float = int 	 => implicit cast to float
-int = float 	 => implicit cast to int
-int,float = bool => value=0;
-
-
-Variables:
-=========
-undeclared-> default type int, val 0
 Arithmetic operations:
 ======================
 ------

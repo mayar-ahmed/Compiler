@@ -1,10 +1,13 @@
-program
-bool x;
-float z;
-int y;
-float l;
+program	
+int i;
+int i2;
+float f;
 
 begin
-y = (-5 + 10) * -2;
-x=true;
+i=1;
+i2=2;
+while(i+i2){
+i2=i2-1;
+};
+
 end

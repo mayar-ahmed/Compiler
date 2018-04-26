@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include<map>
 using namespace std;
+enum M {undeclared=1,uninit=2,assignMismatch=3,compareMismatch=4,numerical=5};
 //extern map<char*,symbolData> symbolTable;
 struct symbolData{
 char*val;
@@ -25,3 +26,17 @@ double calcFloat(double x1, char op, double x2);
 long calcInt(long x1, char op, long x2);
 char*fToCa(float n);
 char*iToCa(int);
+bool compareInt(int x1,char*op, int x2);
+bool compareFloat(float x1, char*op, float x2);
+bool compareBool(bool x1, char*op, bool x2);
+exptype* checkComparison(exptype*e1,char*op,exptype*e2);
+bool isDeclared(char*id);
+char* allocValue(int);
+void msg(int m, int l,char* t1,char* t2);
+bool isInit(char*id);
+void checkAssignBool(char*,char*);
+exptype* checkBoolComparison(exptype*e,char*op,bool bolval);
+bool invalidExpressions(exptype*e1,exptype*e2);
+exptype*checkLogical(exptype*e1,char*op,exptype*e2);
+bool logical(bool x1, char*op,bool x2);
+void checkCond(exptype*);

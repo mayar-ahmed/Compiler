@@ -21,6 +21,7 @@ return strcmp(a,b)<0;
 };
 map<char*,symbolData*,cmp_str> symbolTable;
 map <int,char*> types;
+map <int,char*> dflt;
 
 %}
 
@@ -112,7 +113,8 @@ type : INT {$$=1;}
 | FLOAT {$$=2;}
 | BOOL {$$=3;};
 
-declaration:  CONST type IDENTIFIER ASSIGN number {addConst($3,$2,$5,1);/*cout << "constant defined " << $3<<endl;*/}
+declaration:  CONST type IDENTIFIER ASSIGN inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
+	    | CONST type IDENTIFIER ASSIGN fnum {addConst($3,$2,fToCa($5),2);}
 	    | CONST type IDENTIFIER ASSIGN bval   {addConst($3,$2,$5,3);/*cout << "constant defined " << $3<<endl;*/}
             | type IDENTIFIER      		  {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/}
             ;
@@ -127,8 +129,8 @@ statements:
           | statements statement ENDL
           ;
           
-statement: assignment {cout <<"assignemt statemet" <<endl;}
-        | if_stmt    {cout <<"if statemet" <<endl;}
+statement: assignment {cout <<line<<": assignemt statemet" <<endl;}
+        | if_stmt    {cout <<line<<": if statemet" <<endl;}
         | while_stsmt  {cout <<"while loop " <<endl;}
         | do_while_stmt {cout <<"do while loop" <<endl;}
         | for_stmt  { cout << "for loop" ;}
@@ -144,7 +146,7 @@ bval : TRUE 	 {$$=(char*)"1";}
      ;
 
 assignment: IDENTIFIER ASSIGN expr {checkAssignExp($1,$3);}
-            | IDENTIFIER ASSIGN bval 
+            | IDENTIFIER ASSIGN bval {checkAssignBool($1,$3);}
             ;
 
 
@@ -164,26 +166,26 @@ number: fnum {$$=fToCa($1);}
 | inum {$$=iToCa($1);};
     
 /* all kinds of expressions */
-expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL); }
+expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);}
     | inum 		{$$ = createExpr(1,iToCa($1),0,NULL);}
     | IDENTIFIER 	{$$ = createExpr(0,NULL,1,$1);} 
     | expr PLUS expr 	{$$ = checkArithm($1,'+',$3);}
     | expr MINUS expr 	{$$ = checkArithm($1,'-',$3);}
     | expr MUL expr 	{$$ = checkArithm($1,'*',$3);}
     | expr DIV expr 	{$$ = checkArithm($1,'/',$3);}
-    | expr GT expr	
-    | expr GTE expr
-    | expr LT expr
-    | expr LTE expr
-    | expr NE expr
-    | expr EQ expr
-    | expr EQ TRUE
-    | expr EQ FALSE
-    | expr NE TRUE
-    | expr NE FALSE
-    | expr AND expr
-    | expr OR expr 
-    | NOT expr
+    | expr GT expr	{$$ = checkComparison($1,(char*)">" ,$3);}	
+    | expr GTE expr	{$$ = checkComparison($1,(char*)">=",$3);}
+    | expr LT expr	{$$ = checkComparison($1,(char*)"<" ,$3);}
+    | expr LTE expr	{$$ = checkComparison($1,(char*)"<=",$3);}
+    | expr NE expr	{$$ = checkComparison($1,(char*)"!=",$3);}
+    | expr EQ expr	{$$ = checkComparison($1,(char*)"==",$3);}
+    | expr EQ TRUE	{$$ = checkBoolComparison($1,(char*)"==",$3);}
+    | expr EQ FALSE	{$$ = checkBoolComparison($1,(char*)"==",$3);}
+    | expr NE TRUE	{$$ = checkBoolComparison($1,(char*)"!=",$3);}
+    | expr NE FALSE	{$$ = checkBoolComparison($1,(char*)"!=",$3);}
+    | expr AND expr	{$$ = checkLogical($1,(char*)"&",$3);}
+    | expr OR expr 	{$$ = checkLogical($1,(char*)"|",$3);}
+    | NOT expr		{$$ = checkLogical(NULL,(char*)"!",$2);}
     | LB expr RB	{$$=$2;}
     ;
 
@@ -193,7 +195,7 @@ if_stmt: IF LB expr RB THEN statements ENDIF /*{ cout << "if then endif "<<endl;
         
         
 
-while_stsmt: WHILE LB expr RB LC statements RC ;
+while_stsmt: WHILE LB expr {checkCond($3);} RB LC statements RC ;
 
 do_while_stmt:DO LC statements RC WHILE LB expr RB;
 
@@ -239,10 +241,14 @@ mexpr: mexpr PLUS term
 
 int main(int, char**) {
 	//initialize types map
+	types[0]= (char*)"unknown";
 	types[1]= (char*)"int"; 
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
-
+	//initialize map for default values for each type
+	dflt[1] = (char*)"0";
+	dflt[2] = (char*)"0.0";
+	dflt[3] = (char*)"0"; 
 	// open a file handle to a particular file:
 	FILE *myfile = fopen("temp.txt", "r");
 	// make sure it is valid:
@@ -267,24 +273,59 @@ void yyerror(const char *s) {
 
 /** Functions used for semantic analysis **/
 
+bool isDeclared(char*id){
+map<char*,symbolData*>::iterator it = symbolTable.find(id);
+return it!=symbolTable.end();
+}
+//Convert integer to char*
+char*iToCa(int i){
+ char*str = (char*)malloc(sizeof(int));	
+ sprintf(str, "%d", i);
+return str;
+}
+//Convert float to char*
+char*fToCa(float n){
+char *b = (char*)malloc(sizeof(float));
+int ret = snprintf(b, sizeof b, "%f", n);
+//cout<<"Converted Value: "<<b<<endl;
+return b;
+}
+
+void msg(int m, int l,char* t1,char* t2){
+if(m==1)
+	printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,t1);	
+else if(m==2)
+	printf("Semantic ERROR line: %d :: Usage of uninitialized variable %s \n",l,t1);
+else if(m==3)
+	printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s \n",line,t1,t2);
+else if(m==4)
+	printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",l,t1,t2);
+else if(m==5)
+	printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",l);
+}
+
+bool isInit(char*id){
+return symbolTable[id]->val!=NULL;
+}
+
+
 // Constant declaration
 void addConst(char*id, int t1,char* val, int t2){
 
-map<char*,symbolData*>::iterator it = symbolTable.find(id);
-
-if(it!=symbolTable.end())
-{printf("Semantic ERROR line: %d :: Multiple declarations for Const %s",line,id);
+if(isDeclared(id)){
+printf("Semantic ERROR line: %d :: Multiple declarations for Const %s",line,id);
 return;
 }
-
-if(t1!=t2)
-{
-printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s\n",line,types[t2],types[t1]);
-}
-
-
 symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
+
+if(t1!=t2){
+msg(assignMismatch,line,types[t2],types[t1]);
+}
 d->val=val;
+/*
+d->val = (char*)malloc(sizeof(e->val));
+strncpy(d->val,e->val,sizeof(d->val));
+*/
 d->type=t1;
 d->cl=1;
 d->used=0;
@@ -292,11 +333,10 @@ symbolTable[id]=d;
 //cout<<"Const added to table\n";
 }
 
-//Variable declaration
-void addVar(char*id, int t){
+/******************Variable declaration*******************/
 
-map<char*,symbolData*>::iterator it = symbolTable.find(id);
-if(it!=symbolTable.end())
+void addVar(char*id, int t){
+if(isDeclared(id))
 {printf("Semantic ERROR line: %d :: Multiple declarations for variable %s \n",line,id);
 return;
 }
@@ -309,75 +349,136 @@ d->used=0;
 symbolTable[id]=d;
 //cout<<"Var added to table\n";
 }
-
-void checkAssignExp(char*id,exptype*e){
-symbolData* d = symbolTable[id];
+/********************Assignment Statement Checks***********/
+void checkAssignBool(char*id1,char*bolval){
+if(!isDeclared(id1)){
+msg(undeclared,line,id1,NULL);
+return;
+}
+	symbolData* d = symbolTable[id1];
 //Constant can't be changed
 if(d->cl == 1){
 printf("Semantic ERROR line: %d :: Invalid Assignment to a constant\n",line);
 return;
 }
 //Check type mismatch
+if(d->type != 3){
+msg(assignMismatch,line,types[3],types[d->type]);
+return;
+}
+
+d->val = (char*)malloc(sizeof(bolval));
+strncpy(d->val,bolval,sizeof(d->val));
+}
+
+void checkAssignExp(char*id1,exptype*e){
+
+//Check identifier is declared prevoiusly
+if(!isDeclared(id1)){
+	msg(undeclared,line,id1,NULL);
+//	printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,id1);
+	return;
+}
+
+if(e->id){
+	if(!isDeclared(e->name)){
+	msg(undeclared,line,e->name,NULL);
+	return;
+	}
+	
+	else if (!isInit(e->name)){
+	msg(uninit,line,e->name,NULL);
+	return;
+	}
+}
+
+
+symbolData* d = symbolTable[id1];
+//Constant can't be changed
+if(d->cl == 1){
+printf("Semantic ERROR line: %d :: Invalid Assignment to a constant\n",line);
+return;
+}
+//
+//Check type mismatch
 if(d->type != e->type){
 printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s \n",line,types[e->type],types[d->type]);
-}
+return;
 }
 
-char*fToCa(float n){
-char *b = (char*)malloc(64);
-int ret = snprintf(b, sizeof b, "%f", n);
-cout<<"Converted Value: "<<b<<endl;
-return b;
+d->val = (char*)malloc(sizeof(e->val));
+strncpy(d->val,e->val,sizeof(d->val));
+cout<<id1<<" "<<d->val<<endl;
+if(e->id==1)
+{
+symbolTable[e->name]->used=1;
 }
+
+}
+
+/*
+fnum 		{$$ = createExpr(2,fToCa($1),0,NULL); }
+inum 		{$$ = createExpr(1,iToCa($1),0,NULL);}
+IDENTIFIER 	{$$ = createExpr(0,NULL,1,$1);} 
+*/
 
 //1,NULL,1,$1 
+/*******************Create Expression *******************/
 exptype*createExpr(int i, char* c, int id1, char*n){
 
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
 
 if(id1==1)
 {
-	map<char*,symbolData*>::iterator it = symbolTable.find(n);
-	if(it==symbolTable.end())
-	{	printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,n);
-		t-> type=i;
-		t-> val=c;
+	if(!isDeclared(n))
+	{	//printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,n);
+		t->type=0;
+		t->val = NULL;
 	}
-	else if(symbolTable[n]->val==NULL){
-			printf("Semantic ERROR line: %d :: Usage of uninitialized variable %s \n",line,n);
-			t->type=symbolTable[n]->type;
-			t->val = c;
+	else if(!isInit(n)){
+		//printf("Semantic ERROR line: %d :: Usage of uninitialized variable %s \n",line,n);
+		t->type=symbolTable[n]->type;
+		t->val = NULL;
 		}
 	else{
 		t->type=symbolTable[n]->type;
 		t->val=symbolTable[n]->val;
 	}
-	
-	
 }
 else{
 	t->type=i;
-	t->val=c;
+	t->val = allocValue(sizeof(c));
+	strncpy(t->val,c,sizeof(t->val));	
 }
-
 t->id=id1;
 t->name=n;
 
 return t;
 }
 
+/*********************   Check Arithmetic Operations ******************/
 exptype* checkArithm(exptype*e1,char op,exptype*e2){
+
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
-//One of the expressions is not integer or float
-if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
+if(invalidExpressions(e1,e2)){
+	t->type=0;
+	t->val=NULL;
+	t->name=NULL;
+	t->id=0;
+return t;
+}
+
+//One of the expressions is bool
+if(e1->type==3 || e2->type==3)
 {
-	printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",line);
-	t->type = 0;
-	t->val = 0;
-	t->id = 0;
-	t->name = NULL;
+	msg(numerical,line,NULL,NULL);
+	t->type=0;
+	t->val=NULL;
+	t->name=NULL;
+	t->id=0;
 	return t;
 }
+
 //One of the expressions is float
 if(e1->type == 2 || e2->type == 2)
 {
@@ -394,15 +495,22 @@ if(e1->type == 2 || e2->type == 2)
 //Both expressions are integers
 	long x1 = (long)atoi(e1->val);
 	long x2 = (long)atoi(e2->val);
-	long res = calcInt(x1, op,x2);
+	if(op=='/'){
+	double res = calcFloat((double)x1,op,(double)x2);
+	t->type = 2;
+	t->val = fToCa(res);
 	cout<<"Result: "<<res<<endl;
+	}
+	else{
+	long res = calcInt(x1, op,x2);
 	t->type = 1;
 	t->val = iToCa(res);
+	cout<<"Result: "<<res<<endl;
+	}		
+	
 	t->id = 0;
 	t->name = NULL;
 	return t;
-
-
 }
 
 double calcFloat(double x1, char op, double x2){
@@ -450,14 +558,274 @@ case '/':
 	break;
 }
 }
+/******************** Check Comparison statements ******************/
+exptype* checkComparison(exptype*e1,char*op,exptype*e2){
+exptype* t = (exptype*)malloc(sizeof(struct exptype));
+//One of the expressions is not integer or float
+if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
+{
+	//Comparison operands must have numerical values only
+	if(op != "!="&&op!="=="){
+		printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",line);
+		t->type = 0;
+		t->val = NULL;
+		t->id = 0;
+		t->name = NULL;
+		return t;
+	}
+}
 
-char*iToCa(int i){
- char*str = (char*)malloc(sizeof(int));	
- sprintf(str, "%d", i);
-return str;
+if(invalidExpressions(e1,e2)){
+	t->type=0;
+	t->val=NULL;
+	t->name=NULL;
+	t->id=0;
+return t;
+}
+
+//Compare 2 integers
+if(e1->type == 1 && e2->type==1){
+	long x1 = (long)atoi(e1->val);
+	long x2 = (long)atoi(e2->val);
+	bool res = compareInt(x1,op,x2);
+	cout<<line<<": Result: "<<res<<endl;
+	t->type = 3;
+	if(res)
+		t->val = (char*)"1";
+	else
+		t->val=(char*)"0";
+	t->id = 0;
+	t->name = NULL;
+	return t;
+}
+
+//Compare 2 floats
+if(e1->type == 2 && e2->type==2){
+	double x1 = (double)atoi(e1->val);
+	double x2 = (double)atoi(e2->val);
+	bool res = compareFloat(x1,op,x2);
+	cout<<line<<": Result: "<<res<<endl;
+	t->type = 3;
+	if(res)
+		t->val = (char*)"1";
+	else
+		t->val=(char*)"0";
+	t->id = 0;
+	t->name = NULL;
+	return t;
+}
+
+//Compare 2 Booleans
+if(e1->type == 3 && e2->type==3){
+	if(op!="!=" && op!="==")
+	{
+	printf("Semantic ERROR line: %d :: Can't Compare boolean values \n",line);
+	t->type = 0;
+	t->val = NULL;
+	t->id = 0;
+	t->name = NULL;
+	return t;
+	}
+	bool x1,x2;
+	if(e1->val=="1")
+	x1=true;
+	else 
+	x1=false;
+	if(e2->val=="1")
+	x2=true;
+	else 
+	x2=false;
+		
+	bool res = compareBool(x1,op,x2);
+	cout<<line<<": Result: "<<res<<endl;
+	t->type = 3;
+	if(res)
+		t->val = (char*)"1";
+	else
+		t->val=(char*)"0";
+	t->id = 0;
+	t->name = NULL;
+	return t;
+}
+
+printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e1->type],types[e2->type]);
+t->type =0;
+t->val = NULL;
+t->id = 0;
+t->name = NULL;
+return t;
+}
+
+/******************************Check boolean comparison***********************************/
+exptype* checkBoolComparison(exptype*e,char*op,bool bolval){
+exptype* t = (exptype*)malloc(sizeof(struct exptype));
+bool v=false;
+if(e->id &&!isDeclared(e->name)){
+msg(undeclared,line,e->name,NULL);
+v=true;
+}
+else if(e->type!=3){
+printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e->type],types[3]);
+v=true;
+}
+//uninitialized
+else if (e->id && !isInit(e->name)){
+msg(uninit,line,e->name,NULL);
+v=true;
+}
+
+if(v){
+t->type =0;
+t->val = NULL;
+t->id = 0;
+t->name = NULL;
+return t;
+}
+bool x1;
+if(e->val == "1")
+x1=true;
+else
+x1=false;
+
+bool res = compareBool(x1,op,bolval);
+cout<<line<<": Result: "<<res<<endl;
+t->type = 3;
+if(res)
+	t->val = (char*)"1";
+else
+	t->val=(char*)"0";
+t->id = 0;
+t->name = NULL;
+return t;
+}
+/**************** Check Logical Operations *********************/
+exptype*checkLogical(exptype*e1,char*op,exptype*e2){
+exptype* t = (exptype*)malloc(sizeof(struct exptype));
+//One of the expressions is not boolean
+bool v = false;
+if(e1->type!=3 || e2->type!=3){
+printf("Semantic ERROR line: %d :: Both values have to be bool \n",line);
+v=true;
+}
+//One of them is undeclared or unintialiazed
+if(invalidExpressions(e1,e2)||v){
+t->type=0;
+t->val=NULL;
+t->name=NULL;
+t->id=0;
+}
+bool x1 = (strcmp(e1->val,"1")==0)?true:false; 
+bool x2 = (strcmp(e2->val,"1")==0)?true:false;
+bool res = logical(x1,op,x2);
+t->type=3;
+t->val=res?(char*)"1":(char*)"0";
+cout<<line<<": Result: "<<res<<endl;
+t->name=NULL;
+t->id=0;
+}
+void checkCond(exptype*e){
+cout<<"Type: "<<e->type<<endl;
+
+}
+bool logical(bool x1, char*op,bool x2){
+if(op == "&")
+return x1&&x2;
+if(op=="|")
+return x1||x2;
+if(op=="!")
+return !x2;
 }
 
 
+bool invalidExpressions(exptype*e1,exptype*e2){
+bool udec1 = false, udec2 = false, uin1 = false, uin2 = false;
+//Expression 1 is identifier
+if(e1->id){
+	//undelcared
+	if(!isDeclared(e1->name)){
+	msg(undeclared,line,e1->name,NULL);
+	udec1=true;
+	}
+	//uninitialized
+	else if (e1->id && !isInit(e1->name)){
+	msg(uninit,line,e1->name,NULL);
+	uin1=true;
+	}
+	if(!udec1 && !uin1)
+		symbolTable[e1->name]->used=1;
+}
+//Expression 2 is identifier
+if(e2->id){
+	//undelcared
+	if(!isDeclared(e2->name)){
+	msg(undeclared,line,e2->name,NULL);
+	udec2=true;
+	}	
+	//uninitialized
+	if (!isInit(e2->name)){
+	msg(uninit,line,e2->name,NULL);
+	uin2=true;
+
+	}
+	if(!udec2&&!uin2)
+		symbolTable[e2->name]->used=1;
+}
+
+return (udec1 || udec2 || uin1 || uin2);
+}
+bool compareInt(int x1,char*op, int x2){
+if(op == ">")
+return x1>x2;
+if(op=="<")
+return x1<x2;
+if(op==">=")
+return x1>=x2;
+if(op=="<=")
+return x1<=x2;
+if(op=="==")
+return x1==x2;
+if(op=="!=")
+return x1!=x2;
+}
+
+bool compareFloat(float x1, char*op, float x2){
+if(op == ">")
+return x1>x2;
+if(op=="<")
+return x1<x2;
+if(op==">=")
+return x1>=x2;
+if(op=="<=")
+return x1<=x2;
+if(op=="==")
+return x1==x2;
+if(op=="!=")
+return x1!=x2;
+}
+
+bool compareBool(bool x1, char*op, bool x2){
+if(op == ">")
+return x1>x2;
+if(op=="<")
+return x1<x2;
+if(op==">=")
+return x1>=x2;
+if(op=="<=")
+return x1<=x2;
+if(op=="==")
+return x1==x2;
+if(op=="!=")
+return x1!=x2;
+}
+
+char*allocValue(int t){
+if (t==1)
+return (char*)malloc(sizeof(int));
+else if(t==2)
+return (char*)malloc(sizeof(float));
+else
+return (char*)malloc(2*sizeof(char));
+}
 
 
 

@@ -1,0 +1,69 @@
+Constants:
+==========
+Multiple declarations: only first is saved, others don't exist
+float = int 	 => implicit cast to float
+int = float 	 => implicit cast to int
+int,float = bool => value=0;
+
+
+Variables:
+=========
+undeclared-> default type int, val 0
+Arithmetic operations:
+======================
+------
+Valid:
+------
+int   =  int   (+,-,*,/) int 
+float =  float (+,-,*,/) float
+float =  int   (+,-,*,/) float
+float =  float (+,-,*,/) int
+--------
+invalid:
+--------
+types:
+------
+Error: Mismatch
+
+int   (+,-,*,/) bool => type = int, value = value(int)
+float (+,-,*,/) bool => type = float, value = value(float)
+--------------------------
+undeclared, uninitialized:
+--------------------------
+Error: Both must have a numberical value
+assume type as the other operand and default value
+---------------
+default values:
+--------------
+int,float -> zero
+bool -> false
+
+Comparisons:
+============
+
+valid:
+------
+int (>,<,<=,>=) int
+float (>,<,<=,>=) float
+
+Assignment operations:
+======================
+valid:
+------
+int   = int
+float = float
+bool  = bool
+
+LHS: declared, non constant
+if invalid the value remains NULL
+
+Comparison operations:
+----------------------
+
+undeclared -> "error in type"
+
+Expressions:
+------------
+if undeclared or wrong type:
+bool: 	   type:bool - val:false
+int,float: type:float - val: 0 

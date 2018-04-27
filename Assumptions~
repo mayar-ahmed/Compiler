@@ -1,6 +1,19 @@
+======================
+Assignment operations:
+======================
+valid:
+------
+float=float
+bool=bool
+int=int
+invalid:
+--------
+otherwise, value is not assigned and remains null
+identifier is considered uninitialized
+
+======================
 Arithmetic operations:
 ======================
-------
 Valid:
 ------
 int   =  int   (+,-,*,/) int 
@@ -10,49 +23,27 @@ float =  float (+,-,*,/) int
 --------
 invalid:
 --------
-types:
-------
-Error: Mismatch
-
-int   (+,-,*,/) bool => type = int, value = value(int)
-float (+,-,*,/) bool => type = float, value = value(float)
+types - Error: Mismatch
+int   (+,-,*,/) bool => type = unknown, value = value(int)
+float (+,-,*,/) bool => type = unknown, value = value(float)
+Division by zero -> value is zero
 --------------------------
 undeclared, uninitialized:
---------------------------
 Error: Both must have a numberical value
-assume type as the other operand and default value
----------------
-default values:
---------------
-int,float -> zero
-bool -> false
-
+unknown type
+===========
 Comparisons:
 ============
-
 valid:
 ------
 int (>,<,<=,>=) int
 float (>,<,<=,>=) float
+invalid:
+-------
+undeclared, uninitialized, invalid types-> unknown type
 
-Assignment operations:
-======================
-valid:
-------
-int   = int
-float = float
-bool  = bool
 
-LHS: declared, non constant
-if invalid the value remains NULL
 
-Comparison operations:
-----------------------
 
-undeclared -> "error in type"
 
-Expressions:
-------------
-if undeclared or wrong type:
-bool: 	   type:bool - val:false
-int,float: type:float - val: 0 
+

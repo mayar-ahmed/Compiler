@@ -7,6 +7,7 @@ using namespace std;
 #include "parser.tab.h"
 
 int line=1;
+extern char *yytext;
 
 %}
 

@@ -4,11 +4,15 @@
 #include <stdlib.h>
 #include<map>
 using namespace std;
-enum M {undeclared=1,uninit=2,assignMismatch=3,compareMismatch=4,numerical=5};
+enum M {undeclared=1,uninit=2,assignMismatch=3,compareMismatch=4,numerical=5,uninitVar=6,unusedVar=7,brk=8,cont=9,unusedConst=10};
 //extern map<char*,symbolData> symbolTable;
 struct symbolData{
 char*val;
 int type,cl,used;
+};
+struct num{
+char*val;
+int type;
 };
 //Expressions
 struct exptype{
@@ -42,3 +46,6 @@ bool logical(bool x1, char*op,bool x2);
 void checkCond(exptype*);
 void checkBreak();
 void checkContinue();
+void checkUnused();
+num*createNum(int,char*);
+void checkType(char*id,int t,int m);

@@ -22,7 +22,6 @@ return strcmp(a,b)<0;
 };
 map<char*,symbolData*,cmp_str> symbolTable;
 map <int,char*> types;
-map <int,char*> dflt;
 
 %}
 
@@ -33,6 +32,7 @@ map <int,char*> dflt;
 	char *sval;
 	bool bval;
 	struct exptype *eval;
+	struct num *nval;
 }
 
 //define constant-string tokens or just return them 
@@ -84,14 +84,14 @@ map <int,char*> dflt;
 %token <ival> INUM
 %token <bval> TRUE
 %token <bval> FALSE
-%token <sval>  IDENTIFIER
+%token <sval> IDENTIFIER
 
 %type <eval> expr
 %type <fval> fnum
 %type <ival> inum
 %type <ival> type
 %type <sval> bval
-%type <sval> number
+%type <nval> number
 /* define precedence of operations from lowest to highest */
 %right ASSIGN 
 %left OR 
@@ -130,14 +130,14 @@ statements:
           | statements statement ENDL
           ;
           
-statement: assignment	{cout <<line<<": assignemt statemet" <<endl;}
-        |if_stmt	{cout <<line<<": if statemet" <<endl;}
-        |while_stsmt 	{cout <<"while loop " <<endl;}
-        |do_while_stmt	{cout <<"do while loop" <<endl;}
-        |for_stmt 	{cout << "for loop" ;}
-        |switch_stmt    {cout <<"switch statemet" <<endl;}
-        |BREAK          {checkBreak();cout <<" break statement" <<endl;}
-        |CONTINUE  	{checkContinue();cout <<" cntinue statement" <<endl;}
+statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
+        |if_stmt	{/*cout <<line<<": if statemet" <<endl;*/}
+        |while_stsmt 	{/*cout <<"while loop " <<endl;*/}
+        |do_while_stmt	{/*cout <<"do while loop" <<endl;*/}
+        |for_stmt 	{/*cout << "for loop" ;*/}
+        |switch_stmt    {/*cout <<"switch statemet" <<endl;*/}
+        |BREAK          {checkBreak();/*cout <<" break statement" <<endl;*/}
+        |CONTINUE  	{checkContinue();/*cout <<" cntinue statement" <<endl;*/}
         ;
         
 
@@ -163,8 +163,8 @@ fnum: FNUM {$$=$1;}
 | MINUS FNUM {$$=-1*$2;};
 inum: INUM {$$=$1;}
 |  MINUS INUM{$$=-1*$2;};
-number: fnum {$$=fToCa($1);}
-| inum {$$=iToCa($1);};
+number: fnum {$$=createNum(2,fToCa($1));}
+| inum {$$=createNum(1,iToCa($1));};
     
 /* all kinds of expressions */
 expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);}
@@ -212,14 +212,16 @@ case: CASE pint COLON statements;
 cases:  | cases case;
 default: DEFAULT COLON statements ;
 
-switch_stmt: SWITCH LB IDENTIFIER RB  LC{sCount++;} s_stmt RC{sCount--;} ;
+switch_stmt: SWITCH LB IDENTIFIER{checkType($3,1,2);} RB  LC{sCount++;} s_stmt RC{sCount--;} ;
 
 
 ///////////////////////////////////////////////////////////
 
 
 /* needs modification to make sure it's correct */
-for_stmt: FOR LB IDENTIFIER  ASSIGN expr COLON expr COLON number RB LC statements RC; 
+
+for_stmt: FOR LB IDENTIFIER{checkType($3,1,1);} ASSIGN expr{checkAssignExp($3,$6);} COLON expr 
+COLON number{checkType($3,$11->type,3);} RB LC{lCount++;} statements RC{lCount--;}; 
 
         
 /* old definition of expression */
@@ -250,10 +252,6 @@ int main(int, char**) {
 	types[1]= (char*)"int"; 
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
-	//initialize map for default values for each type
-	dflt[1] = (char*)"0";
-	dflt[2] = (char*)"0.0";
-	dflt[3] = (char*)"0"; 
 	// open a file handle to a particular file:
 	FILE *myfile = fopen("temp.txt", "r");
 	// make sure it is valid:
@@ -268,16 +266,58 @@ int main(int, char**) {
 	do {
 		yyparse();
 	} while (!feof(yyin));
+	checkUnused();
 	
 }
 
 void yyerror(const char *s) {
 	cout << "oops, parse error in line "<<line<<"!  Message: " << s << endl;
+	/*	
+	fprintf(stderr,"Error: %s at line %d\n", s,line);
+	fprintf(stderr, "Parser does not expect '%s\n'",yytext);
+	*/
 	exit(-1);
 }
 
 /** Functions used for semantic analysis **/
 
+void checkType(char*id,int t,int m){
+if(!isDeclared(id)){
+msg(undeclared,line,id,NULL);
+return;
+}
+//Switch case
+if(m==2){
+if(!isInit(id)){
+msg(uninit,line,id,NULL);
+return;
+}
+}
+else if(m==1){
+	if(symbolTable[id]->type !=1 && symbolTable[id]->type !=2){
+	printf("Semantic ERROR line: %d :: Loop counter must have int or float type",line);
+	}
+}
+else{
+	if(symbolTable[id]->type == 2)
+		return;
+	if(t!=1)
+	printf("Semantic ERROR line: %d :: Step has to be integer for integer counter",line);
+}
+}
+void checkUnused(){
+map<char*,symbolData*> ::iterator it;
+for(it=symbolTable.begin();it!=symbolTable.end();it++){
+	if(!it->second->used){
+		if(it->second->cl==1)
+		msg(unusedConst,0,it->first,NULL);
+		else
+		msg(unusedVar,0,it->first,NULL);
+	}
+
+}
+
+}
 bool isDeclared(char*id){
 map<char*,symbolData*>::iterator it = symbolTable.find(id);
 return it!=symbolTable.end();
@@ -295,6 +335,7 @@ int ret = snprintf(b, sizeof b, "%f", n);
 //cout<<"Converted Value: "<<b<<endl;
 return b;
 }
+//uninitVar=6,unusedVar=7
 
 void msg(int m, int l,char* t1,char* t2){
 if(m==1)
@@ -307,6 +348,17 @@ else if(m==4)
 	printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",l,t1,t2);
 else if(m==5)
 	printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",l);
+else if(m==6)
+	printf("Semantic WARNING :: Uninitialized Variable %s \n",t1);
+else if(m==7)
+	printf("Semantic WARNING :: Unused Variable %s \n",t1);
+else if(m==8)
+	printf("Semantic ERROR line: %d :: Break statement not within loop or switch case \n",l);
+else if(m==9)
+	printf("Semantic ERROR line: %d :: Continue statement not within loop \n",l);
+else if(m==10)
+	printf("Semantic WARNING :: Constant %s is unused \n",t1);
+
 }
 
 bool isInit(char*id){
@@ -315,12 +367,14 @@ return symbolTable[id]->val!=NULL;
 
 void checkBreak(){
 if(lCount == 0 && sCount==0){
-printf("Semantic ERROR line: %d :: Break statement not within loop or switch case \n",line);
+msg(brk,line,NULL,NULL);
+//printf("Semantic ERROR line: %d :: Break statement not within loop or switch case \n",line);
 }
 }
 void checkContinue(){
 if(lCount == 0){
-printf("Semantic ERROR line: %d :: Continue statement not within loop \n",line);
+msg(cont,line,NULL,NULL);
+//printf("Semantic ERROR line: %d :: Continue statement not within loop \n",line);
 }
 }
 
@@ -335,17 +389,18 @@ symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
 
 if(t1!=t2){
 msg(assignMismatch,line,types[t2],types[t1]);
+d->val=NULL;
 }
-d->val=val;
-/*
-d->val = (char*)malloc(sizeof(e->val));
-strncpy(d->val,e->val,sizeof(d->val));
-*/
+else{
+d->val = (char*)malloc(sizeof(val));
+strncpy(d->val,val,sizeof(d->val));
+}
+
 d->type=t1;
 d->cl=1;
 d->used=0;
 symbolTable[id]=d;
-//cout<<"Const added to table\n";
+printf("%d: %s Const %s %s\n",line,types[t1],id,d->val);
 }
 
 /******************Variable declaration*******************/
@@ -362,9 +417,9 @@ d->type=t;
 d->cl=0;
 d->used=0;
 symbolTable[id]=d;
-//cout<<"Var added to table\n";
+printf("%d: %s Var %s %s\n",line,types[t],id,d->val);
 }
-/********************Assignment Statement Checks***********/
+/********************Bool Assignment Statement Check***********/
 void checkAssignBool(char*id1,char*bolval){
 if(!isDeclared(id1)){
 msg(undeclared,line,id1,NULL);
@@ -384,8 +439,9 @@ return;
 
 d->val = (char*)malloc(sizeof(bolval));
 strncpy(d->val,bolval,sizeof(d->val));
+printf("%d: %s %s %s \n",line,types[3],id1,d->val);
 }
-
+/********************Expression Assignment Statement Check***********/
 void checkAssignExp(char*id1,exptype*e){
 
 //Check identifier is declared prevoiusly
@@ -417,20 +473,26 @@ return;
 //
 //Check type mismatch
 if(d->type != e->type){
-printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s \n",line,types[e->type],types[d->type]);
+msg(assignMismatch,line,types[e->type],types[d->type]);
+//printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s \n",line,types[e->type],types[d->type]);
 return;
 }
 
 d->val = (char*)malloc(sizeof(e->val));
 strncpy(d->val,e->val,sizeof(d->val));
-cout<<id1<<" "<<d->val<<endl;
 if(e->id==1)
 {
 symbolTable[e->name]->used=1;
 }
-
+printf("%d: %s %s %s \n",line,types[d->type],id1,d->val);
 }
-
+/*******************Create Expression *******************/
+num*createNum(int t,char* v){
+num* n = (num*)malloc(sizeof(struct num));
+n->type=t;
+n->val=v;
+return n;
+}
 /*
 fnum 		{$$ = createExpr(2,fToCa($1),0,NULL); }
 inum 		{$$ = createExpr(1,iToCa($1),0,NULL);}
@@ -447,11 +509,13 @@ if(id1==1)
 {
 	if(!isDeclared(n))
 	{	//printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,n);
+		msg(undeclared,line,n,NULL);
 		t->type=0;
 		t->val = NULL;
 	}
 	else if(!isInit(n)){
 		//printf("Semantic ERROR line: %d :: Usage of uninitialized variable %s \n",line,n);
+		msg(uninit,line,n,NULL);
 		t->type=symbolTable[n]->type;
 		t->val = NULL;
 		}
@@ -475,6 +539,7 @@ return t;
 exptype* checkArithm(exptype*e1,char op,exptype*e2){
 
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
+
 if(invalidExpressions(e1,e2)){
 	t->type=0;
 	t->val=NULL;
@@ -494,13 +559,19 @@ if(e1->type==3 || e2->type==3)
 	return t;
 }
 
+//Mark Used Variables
+if(e1->id)
+symbolTable[e1->name]->used=1;
+if(e2->id)
+symbolTable[e2->name]->used=1;
+
 //One of the expressions is float
 if(e1->type == 2 || e2->type == 2)
 {
 	double x1 = (double)atof(e1->val);
 	double x2 = (double)atof(e2->val);
 	double res = calcFloat(x1, op,x2);
-	cout<<"Result: "<<res<<endl;
+	cout<<line<<": Result: "<<res<<endl;
 	t->type = 2;
 	t->val = fToCa(res);
 	t->id = 0;
@@ -514,13 +585,13 @@ if(e1->type == 2 || e2->type == 2)
 	double res = calcFloat((double)x1,op,(double)x2);
 	t->type = 2;
 	t->val = fToCa(res);
-	cout<<"Result: "<<res<<endl;
+	cout<<line<<": Result: "<<res<<endl;
 	}
 	else{
 	long res = calcInt(x1, op,x2);
 	t->type = 1;
 	t->val = iToCa(res);
-	cout<<"Result: "<<res<<endl;
+	cout<<line<<": Result: "<<res<<endl;
 	}		
 	
 	t->id = 0;
@@ -581,7 +652,8 @@ if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
 {
 	//Comparison operands must have numerical values only
 	if(op != "!="&&op!="=="){
-		printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",line);
+		//printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",line);
+		msg(numerical,line,NULL,NULL);
 		t->type = 0;
 		t->val = NULL;
 		t->id = 0;
@@ -598,8 +670,16 @@ if(invalidExpressions(e1,e2)){
 return t;
 }
 
+
 //Compare 2 integers
 if(e1->type == 1 && e2->type==1){
+	
+	//Mark Used Variables
+	if(e1->id)
+	symbolTable[e1->name]->used=1;
+	if(e2->id)
+	symbolTable[e2->name]->used=1;
+
 	long x1 = (long)atoi(e1->val);
 	long x2 = (long)atoi(e2->val);
 	bool res = compareInt(x1,op,x2);
@@ -616,6 +696,13 @@ if(e1->type == 1 && e2->type==1){
 
 //Compare 2 floats
 if(e1->type == 2 && e2->type==2){
+	
+	//Mark Used Variables
+	if(e1->id)
+	symbolTable[e1->name]->used=1;
+	if(e2->id)
+	symbolTable[e2->name]->used=1;
+
 	double x1 = (double)atoi(e1->val);
 	double x2 = (double)atoi(e2->val);
 	bool res = compareFloat(x1,op,x2);
@@ -641,6 +728,13 @@ if(e1->type == 3 && e2->type==3){
 	t->name = NULL;
 	return t;
 	}
+	
+	//Mark Used Variables
+	if(e1->id)
+	symbolTable[e1->name]->used=1;
+	if(e2->id)
+	symbolTable[e2->name]->used=1;
+
 	bool x1,x2;
 	if(e1->val=="1")
 	x1=true;
@@ -663,7 +757,8 @@ if(e1->type == 3 && e2->type==3){
 	return t;
 }
 
-printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e1->type],types[e2->type]);
+//printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e1->type],types[e2->type]);
+msg(compareMismatch,line,types[e1->type],types[e2->type]);
 t->type =0;
 t->val = NULL;
 t->id = 0;
@@ -680,7 +775,8 @@ msg(undeclared,line,e->name,NULL);
 v=true;
 }
 else if(e->type!=3){
-printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e->type],types[3]);
+//printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e->type],types[3]);
+msg(compareMismatch,line,types[e->type],types[3]);
 v=true;
 }
 //uninitialized
@@ -696,6 +792,11 @@ t->id = 0;
 t->name = NULL;
 return t;
 }
+
+//Mark Used Variables
+if(e->id)
+symbolTable[e->name]->used=1;
+
 bool x1;
 if(e->val == "1")
 x1=true;
@@ -728,7 +829,15 @@ t->type=0;
 t->val=NULL;
 t->name=NULL;
 t->id=0;
+return t;
 }
+
+//Mark Used Variables
+if(e1->id)
+symbolTable[e1->name]->used=1;
+if(e2->id)
+symbolTable[e2->name]->used=1;
+
 bool x1 = (strcmp(e1->val,"1")==0)?true:false; 
 bool x2 = (strcmp(e2->val,"1")==0)?true:false;
 bool res = logical(x1,op,x2);
@@ -739,6 +848,15 @@ t->name=NULL;
 t->id=0;
 }
 void checkCond(exptype*e){
+if(e->id==1){
+if(!isDeclared(e->name)){
+msg(undeclared,line,e->name,NULL);
+return;
+}
+if(!isInit(e->name))
+msg(uninit,line,e->name,NULL);
+return;
+}
 if(e->type!=3){
 printf("Semantic ERROR line: %d :: Condition must have a bool value \n",line);
 }
@@ -759,12 +877,12 @@ bool udec1 = false, udec2 = false, uin1 = false, uin2 = false;
 if(e1->id){
 	//undelcared
 	if(!isDeclared(e1->name)){
-	msg(undeclared,line,e1->name,NULL);
+	//msg(undeclared,line,e1->name,NULL);
 	udec1=true;
 	}
 	//uninitialized
 	else if (e1->id && !isInit(e1->name)){
-	msg(uninit,line,e1->name,NULL);
+	//msg(uninit,line,e1->name,NULL);
 	uin1=true;
 	}
 	if(!udec1 && !uin1)
@@ -774,12 +892,12 @@ if(e1->id){
 if(e2->id){
 	//undelcared
 	if(!isDeclared(e2->name)){
-	msg(undeclared,line,e2->name,NULL);
+	//msg(undeclared,line,e2->name,NULL);
 	udec2=true;
 	}	
 	//uninitialized
 	if (!isInit(e2->name)){
-	msg(uninit,line,e2->name,NULL);
+	//msg(uninit,line,e2->name,NULL);
 	uin2=true;
 
 	}

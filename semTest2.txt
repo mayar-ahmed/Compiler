@@ -1,0 +1,27 @@
+program	
+const float pi=3.14;
+const bool y= 1;
+int i;
+int i2;
+float f;
+bool un;
+bool vn;
+bool xn;
+begin
+i2=100;
+f=i2/2.0;
+un=f>50;
+un=f==50.0;
+if(un) then
+i=10;
+else
+i=0;
+endif;
+
+vn = false;
+
+i = 10;
+
+xn = (i!=10) and (vn or un);
+ 
+end

@@ -1,0 +1,15 @@
+program	
+int i;
+int i2;
+float f;
+bool un;
+
+begin
+f = i2+i;
+i2=10;
+i=i2*2;
+i2=i/0;
+f=10.5;
+f=f-5;
+
+end

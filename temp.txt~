@@ -1,17 +1,37 @@
 program	
+int x;
 int i;
-int i2;
-float f;
-
+int j;
+bool r;
 begin
-continue;
-f=0.5;
-i2=2;
-do{
-i2=i2-1;
-if(i2>1) then
-continue;	
-endif;
-}while(i2>i2);
 
+x = 100;
+
+switch(i)
+{
+case 10:
+i=1;
+r=false;
+break;
+case 100:
+i=10;
+r=true;
+break;
+};
+
+for(j=1.5:j<10:1)
+{
+if(r and j<7)then
+continue;
+endif;
+};
+continue;
+for(l=1:j<10:1)
+{
+if(r and j<7)then
+break;
+endif;
+};
+
+break;
 end

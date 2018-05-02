@@ -1,0 +1,31 @@
+program
+const float pi=3.14;
+int x;
+bool l;
+float y;
+begin
+
+x=-4;
+y=-0.5;
+y=4--0.5;
+
+x = x+3;
+x= x + x-3;
+x = x*x;
+x = x/5;
+
+l = x-3>y;
+l = y<=(x+9);
+l=x-3==true;
+l = l or k;
+l= ( x and y) and z;
+
+c =((x+ 5) > 3) and y;
+c=true;
+c= false;
+
+x-3;
+x>y;
+x==y;
+
+end

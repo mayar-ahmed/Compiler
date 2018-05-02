@@ -283,7 +283,7 @@ void yyerror(const char *s) {
 
 void checkType(char*id,int t,int m){
 if(!isDeclared(id)){
-msg(undeclared,line,id,NULL);
+//msg(undeclared,line,id,NULL);
 return;
 }
 //Switch case
@@ -537,7 +537,6 @@ return t;
 
 /*********************   Check Arithmetic Operations ******************/
 exptype* checkArithm(exptype*e1,char op,exptype*e2){
-
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
 
 if(invalidExpressions(e1,e2)){
@@ -545,8 +544,10 @@ if(invalidExpressions(e1,e2)){
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
+
 return t;
 }
+
 
 //One of the expressions is bool
 if(e1->type==3 || e2->type==3)
@@ -879,6 +880,7 @@ if(e1->id){
 	if(!isDeclared(e1->name)){
 	//msg(undeclared,line,e1->name,NULL);
 	udec1=true;
+	return true;
 	}
 	//uninitialized
 	else if (e1->id && !isInit(e1->name)){
@@ -894,6 +896,7 @@ if(e2->id){
 	if(!isDeclared(e2->name)){
 	//msg(undeclared,line,e2->name,NULL);
 	udec2=true;
+	return true;
 	}	
 	//uninitialized
 	if (!isInit(e2->name)){

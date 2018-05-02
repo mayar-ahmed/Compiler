@@ -1,0 +1,93 @@
+program
+
+int x;
+int y;
+
+begin
+
+if ( x==5 ) then
+    x=5;
+    y=true;
+    z=25+7;
+    m=3.55 and 7;
+endif;
+
+
+if ( x==true ) then
+    x=6;
+endif;
+
+do {
+    
+    x=false;
+    x= x+3;
+    if(x<20) then
+    continue;
+    endif;
+	
+    } while ( y ==false);
+
+y=false;
+
+while (x> 5) {
+x=5;
+break;
+};
+
+switch (x) { 
+    case 5: 
+        x=5;
+        x=8 +10;
+        break;
+        
+    case -6:
+        y=true;
+        break;
+        
+    case 3:
+        break;
+        
+    default: 
+        x=5;
+};
+        
+for (x = 3 : 10 : -10) {
+y=y+1;
+break;
+};
+
+for ( x= 5+y : 20 : 2) {
+    y=y+5;
+    
+    if (x>3) then
+        break;
+    else
+        continue;
+    endif;
+    
+};
+if (x>4)
+then
+endif;
+
+if(true)
+then
+endif;
+while ( x ==true ) 
+{
+    x=5;
+    y=z+7;
+    x=9;
+    x= not y;
+
+
+
+if (x+5)) then
+    x=5;
+    else
+    c=6;
+endif;
+
+9=3;
+
+end

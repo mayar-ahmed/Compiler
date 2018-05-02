@@ -6,8 +6,10 @@ bool r;
 begin
 
 x = 100;
+i = 200;
 
-switch(i)
+r=x-y>3;
+switch(o)
 {
 case 10:
 i=1;

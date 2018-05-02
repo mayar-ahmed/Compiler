@@ -6,6 +6,9 @@ bool r;
 begin
 
 x = 100;
+i = 200;
+
+r=x-y>3;
 
 switch(o)
 {

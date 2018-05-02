@@ -2057,7 +2057,7 @@ void yyerror(const char *s) {
 
 void checkType(char*id,int t,int m){
 if(!isDeclared(id)){
-msg(undeclared,line,id,NULL);
+//msg(undeclared,line,id,NULL);
 return;
 }
 //Switch case
@@ -2311,25 +2311,17 @@ return t;
 
 /*********************   Check Arithmetic Operations ******************/
 exptype* checkArithm(exptype*e1,char op,exptype*e2){
-cout<<"in check arithme"<<endl;
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
-cout<<"Before\n";
-cout<<"e1: "<<e1->val<<endl;
-cout<<"e2: ";
-if(e2->val==NULL)
-cout<<"NULL"<<endl;
-else
-cout<<"NOT"<<endl;
 
 if(invalidExpressions(e1,e2)){
 	t->type=0;
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
-cout<<"In\n";
+
 return t;
 }
-cout<<"After\n";
+
 
 //One of the expressions is bool
 if(e1->type==3 || e2->type==3)

@@ -7,7 +7,6 @@ using namespace std;
 #include "parser.tab.h"
 
 int line=1;
-extern char *yytext;
 
 %}
 
@@ -15,76 +14,60 @@ digit [0-9]
 letter [a-zA-Z0-9_]
 
 %% 
-and           {/*cout<<"AND"<<endl;*/ return  AND;}
-not           {/*cout<<"NOT"<<endl;*/ return NOT;}
-or            {/*cout<<"OR"<<endl;*/ return OR;}
-do            {/*cout<<"DO"<<endl;*/ return DO;}
-if            {/*cout<<"IF"<<endl;*/ return IF;}
-while         {/*cout<<"WHILE"<<endl;*/ return WHILE;}
-then          {/*cout<<"THEN"<<endl;*/ return THEN;}
-else          { return ELSE;}
-switch        { return SWITCH;}
-case          { return CASE;}
-default       { return DEFAULT;}
-break         { return BREAK;}
-continue      { return CONTINUE;}
-for           { return FOR;}
-endif         { return ENDIF;}
-inc           { return INC;}
-dec           { return DEC;}
-true          {/*cout<<"TRUE"<<endl;*/ yylval.bval=true; /*cout<<"Val: "<<yylval.bval<<endl;*/ return TRUE;}
-false         {/*cout<<"FALSE"<<endl;*/ yylval.bval=false; return FALSE; }
+and           {return  AND;}
+not           {return NOT;}
+or            {return OR;}
+do            {return DO;}
+if            {return IF;}
+while         {return WHILE;}
+then          {return THEN;}
+else          {return ELSE;}
+switch        {return SWITCH;}
+case          {return CASE;}
+default       {return DEFAULT;}
+break         {return BREAK;}
+continue      {return CONTINUE;}
+for           {return FOR;}
+endif         {return ENDIF;}
+inc           {return INC;}
+dec           {return DEC;}
+true          {yylval.bval=true; return TRUE;}
+false         {yylval.bval=false; return FALSE; }
 
-program       {/*cout<<"PROGRAM"<<endl;*/return  PROGRAM;}
-begin         {/*cout<<"BEGIN"<<endl;*/return  S;}
-end           {/*cout<<"END"<<endl;*/return  END;}
-int           {/*cout<<"INT\n";*/yylval.ival=atoi(yytext);/*cout<<"IVal:"<<yylval.ival<<endl;*/ return  INT;}
-float         {/*cout<<"FLOAT\n";*/yylval.fval=atof(yytext);/*cout<<"FVal:"<<yylval.fval<<endl;*/return  FLOAT;}
-bool          {/*cout<<"BOOL"<<endl;*/return  BOOL;}
-const         {/*cout<<"CONST"<<endl;*/return  CONST;}
+program       {return  PROGRAM;}
+begin         {return  S;}
+end           {return  END;}
+int           {yylval.ival=atoi(yytext); return  INT;}
+float         {yylval.fval=atof(yytext); return  FLOAT;}
+bool          {return  BOOL;}
+const         {return  CONST;}
 
-"="             {/*cout<<"ASSIGN"<<endl;*/return  ASSIGN;}
-"+"             {/*cout<<"PLUS"<<endl;*/return  PLUS;}
-"-"             {/*cout<<"MINUS"<<endl;*/ return  MINUS;}
-"*"             {/*cout<<"MUL"<<endl;*/ return  MUL;}
-"/"             {/*cout<<"DIV"<<endl;*/ return  DIV;}
-"("             {/*cout<<"("<<endl;*/ return  LB;}
-")"             {/*cout<<")"<<endl;*/return  RB;}
-"<"             {/*cout<<"<"<<endl;*/return  LT;}
-">"             {/*cout<<">"<<endl;*/return  GT;}
-"=="            {/*cout<<"=="<<endl;*/return  EQ;}
-"<="            {/*cout<<"<="<<endl;*/return  LTE;}
-">="            {/*cout<<">="<<endl;*/return  GTE;}
-"!="            {/*cout<<"!="<<endl;*/return  NE; }
-":"             {/*cout<<":"<<endl;*/return  COLON;}
-"{"             {/*cout<<"{"<<endl;*/return LC;}
-"}"             {/*cout<<"}"<<endl;*/return RC;}
+"="             {return  ASSIGN;}
+"+"             {return  PLUS;}
+"-"             {return  MINUS;}
+"*"             {return  MUL;}
+"/"             {return  DIV;}
+"("             {return  LB;}
+")"             {return  RB;}
+"<"             {return  LT;}
+">"             {return  GT;}
+"=="            {return  EQ;}
+"<="            {return  LTE;}
+">="            {return  GTE;}
+"!="            {return  NE; }
+":"             {return  COLON;}
+"{"             {return LC;}
+"}"             {return RC;}
 
 
 [ \t]           ; //ignore spaces, tabs and new line
 [\n]		{++line;}
-{digit}+            {  /*cout<<"integer : " <<atoi(yytext) <<endl;*/ yylval.ival = atoi(yytext); return  INUM; }
-[0-9]+\.?[0-9]+	  {  /*cout<<"float : " <<atof(yytext) <<endl;*/ yylval.fval = atof(yytext); return  FNUM; }
-{letter}({letter}|{digit})*     {/*cout<<"identifier : " <<strdup(yytext) <<endl;*/   yylval.sval = strdup(yytext);return  IDENTIFIER;}
+{digit}+            {yylval.ival = atoi(yytext); return  INUM; }
+[0-9]+\.?[0-9]+	  {yylval.fval = atof(yytext); return  FNUM; }
+{letter}({letter}|{digit})*     {yylval.sval = strdup(yytext);return  IDENTIFIER;}
 ;               {return  ENDL;}
 
 
 %%
 
-//remove main after adding parser file, it will automatically call it
-// int main(int, char**) {
-//     // open a file handle to a particular file:
-// 	FILE *myfile = fopen("a.txt", "r");
-// 	// make sure it's valid:
-// 	if (!myfile) {
-// 		cout << "I can't open a.snazzle.file!" << endl;
-// 		return  -1;
-// 	}
-// 	// set lex to read from it instead of defaulting to STDIN:
-// 	yyin = myfile;
-// 
-// 	// lex through the input:
-// 	yylex();
-//    
-// }
 

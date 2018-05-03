@@ -1,0 +1,15 @@
+Code Files:
+===========
+parser.y => grammar
+lexer.l    => lexer
+Test cases:
+===========
+a.text => Testing the main expressions and assignment statements
+b.text => Testing the loops, if statement and switch statements
+
+Each file contains correct statements and some statements with errors at the end of them.
+
+Commant to run:
+===============
+./run.sh
+

@@ -156,8 +156,6 @@ expr: number
 if_: IF LB expr RB THEN statements;
 if_else:ENDIF|ELSE statements ENDIF;
 if_stmt:if_ if_else; 
-        
-        
 
 while_stsmt: WHILE LB expr RB LC statements RC ;
 
@@ -187,7 +185,7 @@ for_stmt: FOR LB IDENTIFIER  ASSIGN expr COLON expr COLON number RB LC statement
 
 int main(int, char**) {
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("b.txt", "r");
+	FILE *myfile = fopen("a.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;

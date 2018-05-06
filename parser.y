@@ -24,7 +24,7 @@ map<char*,symbolData*,cmp_str> symbolTable;
 map <int,char*> types;
 
 %}
-
+%error-verbose
 //token types used  (kol elly elexer momken yraga3o)
 %union {
 	int ival;
@@ -36,7 +36,7 @@ map <int,char*> types;
 }
 
 //define constant-string tokens or just return them 
-%token ENDL
+%token SEMICOLON
 %token END
 %token PROGRAM
 %token CONST
@@ -59,22 +59,22 @@ map <int,char*> types;
 %token DEFAULT
 %token BREAK
 %token CONTINUE
-%token ASSIGN
+%token '='
 %token PLUS
 %token MINUS
 %token MUL
 %token DIV
-%token LB
-%token RB
+%token '('
+%token ')'
 %token GTE
 %token LTE
 %token GT
 %token LT
 %token EQ
 %token NE
-%token LC
+%token '{'
 %token COLON
-%token RC
+%token '}'
 %token DO
 %token FOR
 
@@ -93,7 +93,7 @@ map <int,char*> types;
 %type <sval> bval
 %type <nval> number
 /* define precedence of operations from lowest to highest */
-%right ASSIGN 
+%right '=' 
 %left OR 
 %left AND
 %left NOT
@@ -112,22 +112,23 @@ program : PROGRAM  declarations S  statements  END   { cout<< "program skeleton 
 
 type : INT {$$=1;}
 | FLOAT {$$=2;}
-| BOOL {$$=3;};
+| BOOL {$$=3;}
+;
 
-declaration:  CONST type IDENTIFIER ASSIGN inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
-	    | CONST type IDENTIFIER ASSIGN fnum {addConst($3,$2,fToCa($5),2);}
-	    | CONST type IDENTIFIER ASSIGN bval   {addConst($3,$2,$5,3);/*cout << "constant defined " << $3<<endl;*/}
+declaration:  CONST type IDENTIFIER '=' inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
+	    | CONST type IDENTIFIER '=' fnum {addConst($3,$2,fToCa($5),2);}
+	    | CONST type IDENTIFIER '=' bval   {addConst($3,$2,$5,3);/*cout << "constant defined " << $3<<endl;*/}
             | type IDENTIFIER      		  {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/}
             ;
             
 /* this rule wasn't written in the file*/
 declarations:  
-            | declarations declaration ENDL
+            | declarations declaration SEMICOLON
             ;
 
 /*  block of statements is a number of statements each folowed by a semicolon*/
 statements: 
-          | statements statement ENDL
+          | statements statement SEMICOLON
           ;
           
 statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
@@ -146,10 +147,9 @@ bval : TRUE 	 {$$=(char*)"1";}
      | FALSE     {$$=(char*)"0";}
      ;
 
-assignment: IDENTIFIER ASSIGN expr {checkAssignExp($1,$3);}
-            | IDENTIFIER ASSIGN bval {checkAssignBool($1,$3);}
+assignment: IDENTIFIER '=' expr {checkAssignExp($1,$3);}
+            | IDENTIFIER '=' bval {checkAssignBool($1,$3);}
             ;
-
 
 /* to handle positive and negative numbers with out errors */
 /*
@@ -187,20 +187,20 @@ expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);}
     | expr AND expr	{$$ = checkLogical($1,(char*)"&",$3);}
     | expr OR expr 	{$$ = checkLogical($1,(char*)"|",$3);}
     | NOT expr		{$$ = checkLogical(NULL,(char*)"!",$2);}
-    | LB expr RB	{$$=$2;}
+    | '(' expr ')'	{$$=$2;}
     ;
 /*
 if_stmt: IF LB expr RB THEN statements ENDIF 
         | IF LB expr RB THEN statements ELSE statements ENDIF
         ;
   */      
-if_: IF LB expr{checkCond($3);} RB THEN statements;
+if_: IF '(' expr{checkCond($3);} ')' THEN statements;
 if_else:ENDIF|ELSE statements ENDIF;
 if_stmt:if_ if_else;        
 
-while_stsmt: WHILE LB expr {checkCond($3);} RB LC{lCount++;} statements RC{lCount--;};
+while_stsmt: WHILE '(' expr {checkCond($3);} ')' '{'{lCount++;} statements '}'{lCount--;};
 
-do_while_stmt:DO LC{lCount++;} statements RC{lCount--;} WHILE LB expr{checkCond($9);}RB;
+do_while_stmt:DO '{'{lCount++;} statements '}'{lCount--;} WHILE '(' expr{checkCond($9);}')';
 
 
 /*  switch case definition*/
@@ -212,7 +212,7 @@ case: CASE pint COLON statements;
 cases:  | cases case;
 default: DEFAULT COLON statements ;
 
-switch_stmt: SWITCH LB IDENTIFIER{checkType($3,1,2);} RB  LC{sCount++;} s_stmt RC{sCount--;} ;
+switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);} ')'  '{'{sCount++;} s_stmt '}'{sCount--;} ;
 
 
 ///////////////////////////////////////////////////////////
@@ -220,8 +220,8 @@ switch_stmt: SWITCH LB IDENTIFIER{checkType($3,1,2);} RB  LC{sCount++;} s_stmt R
 
 /* needs modification to make sure it's correct */
 
-for_stmt: FOR LB IDENTIFIER{checkType($3,1,1);} ASSIGN expr{checkAssignExp($3,$6);} COLON expr 
-COLON number{checkType($3,$11->type,3);} RB LC{lCount++;} statements RC{lCount--;}; 
+for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);} COLON expr 
+COLON number{checkType($3,$11->type,3);} ')' '{'{lCount++;} statements '}'{lCount--;}; 
 
         
 /* old definition of expression */
@@ -271,11 +271,10 @@ int main(int, char**) {
 }
 
 void yyerror(const char *s) {
-	cout << "oops, parse error in line "<<line<<"!  Message: " << s << endl;
-	/*	
-	fprintf(stderr,"Error: %s at line %d\n", s,line);
-	fprintf(stderr, "Parser does not expect '%s\n'",yytext);
-	*/
+	//cout << "oops, parse error in line "<<line<<"!  Message: " << s << endl;
+		
+	fprintf(stderr,"Error: %s at line %d\n", s,line);	
+	//fprintf(stderr, "Parser does not expect '%s\n'",yytext);
 	exit(-1);
 }
 
@@ -283,7 +282,6 @@ void yyerror(const char *s) {
 
 void checkType(char*id,int t,int m){
 if(!isDeclared(id)){
-//msg(undeclared,line,id,NULL);
 return;
 }
 //Switch case
@@ -368,13 +366,11 @@ return symbolTable[id]->val!=NULL;
 void checkBreak(){
 if(lCount == 0 && sCount==0){
 msg(brk,line,NULL,NULL);
-//printf("Semantic ERROR line: %d :: Break statement not within loop or switch case \n",line);
 }
 }
 void checkContinue(){
 if(lCount == 0){
 msg(cont,line,NULL,NULL);
-//printf("Semantic ERROR line: %d :: Continue statement not within loop \n",line);
 }
 }
 
@@ -447,18 +443,17 @@ void checkAssignExp(char*id1,exptype*e){
 //Check identifier is declared prevoiusly
 if(!isDeclared(id1)){
 	msg(undeclared,line,id1,NULL);
-//	printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,id1);
 	return;
 }
 
 if(e->id){
 	if(!isDeclared(e->name)){
-	msg(undeclared,line,e->name,NULL);
 	return;
 	}
 	
 	else if (!isInit(e->name)){
-	msg(uninit,line,e->name,NULL);
+	msg(assignMismatch,line,types[e->type],types[symbolTable[id1]->type]);
+	//msg(uninit,line,e->name,NULL);
 	return;
 	}
 }
@@ -471,10 +466,13 @@ printf("Semantic ERROR line: %d :: Invalid Assignment to a constant\n",line);
 return;
 }
 //
+if(e->val == NULL){
+printf("Semantic ERROR line: %d :: RHS has no value, LHS unchanged! \n",line);
+return;
+}
 //Check type mismatch
 if(d->type != e->type){
 msg(assignMismatch,line,types[e->type],types[d->type]);
-//printf("Semantic ERROR line: %d :: Type Mismatch: can't assign %s to %s \n",line,types[e->type],types[d->type]);
 return;
 }
 
@@ -508,13 +506,12 @@ exptype* t = (exptype*)malloc(sizeof(struct exptype));
 if(id1==1)
 {
 	if(!isDeclared(n))
-	{	//printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,n);
+	{
 		msg(undeclared,line,n,NULL);
 		t->type=0;
 		t->val = NULL;
 	}
 	else if(!isInit(n)){
-		//printf("Semantic ERROR line: %d :: Usage of uninitialized variable %s \n",line,n);
 		msg(uninit,line,n,NULL);
 		t->type=symbolTable[n]->type;
 		t->val = NULL;
@@ -540,7 +537,10 @@ exptype* checkArithm(exptype*e1,char op,exptype*e2){
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
 
 if(invalidExpressions(e1,e2)){
-	t->type=0;
+	if(isDeclared(e1->name))
+		t->type=e1->type;
+	else
+		t->type=0;
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
@@ -653,7 +653,6 @@ if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
 {
 	//Comparison operands must have numerical values only
 	if(op != "!="&&op!="=="){
-		//printf("Semantic ERROR line: %d :: Both expressions should have numerical values \n",line);
 		msg(numerical,line,NULL,NULL);
 		t->type = 0;
 		t->val = NULL;
@@ -664,7 +663,10 @@ if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
 }
 
 if(invalidExpressions(e1,e2)){
-	t->type=0;
+	if(isDeclared(e1->name))
+		t->type=e1->type;
+	else
+		t->type=0;
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
@@ -758,7 +760,6 @@ if(e1->type == 3 && e2->type==3){
 	return t;
 }
 
-//printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e1->type],types[e2->type]);
 msg(compareMismatch,line,types[e1->type],types[e2->type]);
 t->type =0;
 t->val = NULL;
@@ -776,7 +777,6 @@ msg(undeclared,line,e->name,NULL);
 v=true;
 }
 else if(e->type!=3){
-//printf("Semantic ERROR line: %d :: Type Mismatch: can't Compare %s to %s \n",line,types[e->type],types[3]);
 msg(compareMismatch,line,types[e->type],types[3]);
 v=true;
 }
@@ -826,7 +826,10 @@ v=true;
 }
 //One of them is undeclared or unintialiazed
 if(invalidExpressions(e1,e2)||v){
-t->type=0;
+if(isDeclared(e1->name))
+		t->type=e1->type;
+	else
+		t->type=0;
 t->val=NULL;
 t->name=NULL;
 t->id=0;
@@ -878,13 +881,11 @@ bool udec1 = false, udec2 = false, uin1 = false, uin2 = false;
 if(e1->id){
 	//undelcared
 	if(!isDeclared(e1->name)){
-	//msg(undeclared,line,e1->name,NULL);
 	udec1=true;
 	return true;
 	}
 	//uninitialized
-	else if (e1->id && !isInit(e1->name)){
-	//msg(uninit,line,e1->name,NULL);
+	else if (!isInit(e1->name)){
 	uin1=true;
 	}
 	if(!udec1 && !uin1)
@@ -894,13 +895,11 @@ if(e1->id){
 if(e2->id){
 	//undelcared
 	if(!isDeclared(e2->name)){
-	//msg(undeclared,line,e2->name,NULL);
 	udec2=true;
 	return true;
 	}	
 	//uninitialized
 	if (!isInit(e2->name)){
-	//msg(uninit,line,e2->name,NULL);
 	uin2=true;
 
 	}

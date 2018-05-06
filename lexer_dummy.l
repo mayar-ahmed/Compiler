@@ -43,13 +43,13 @@ float         {/*cout<<"FLOAT\n";*/yylval.fval=atof(yytext);/*cout<<"FVal:"<<yyl
 bool          {/*cout<<"BOOL"<<endl;*/return  BOOL;}
 const         {/*cout<<"CONST"<<endl;*/return  CONST;}
 
-"="             {/*cout<<"ASSIGN"<<endl;*/return  ASSIGN;}
+"="             {/*cout<<"ASSIGN"<<endl;*/return  *yytext;}
 "+"             {/*cout<<"PLUS"<<endl;*/return  PLUS;}
 "-"             {/*cout<<"MINUS"<<endl;*/ return  MINUS;}
 "*"             {/*cout<<"MUL"<<endl;*/ return  MUL;}
 "/"             {/*cout<<"DIV"<<endl;*/ return  DIV;}
-"("             {/*cout<<"("<<endl;*/ return  LB;}
-")"             {/*cout<<")"<<endl;*/return  RB;}
+"("             {/*cout<<"("<<endl;*/ return  *yytext;}
+")"             {/*cout<<")"<<endl;*/return  *yytext;}
 "<"             {/*cout<<"<"<<endl;*/return  LT;}
 ">"             {/*cout<<">"<<endl;*/return  GT;}
 "=="            {/*cout<<"=="<<endl;*/return  EQ;}
@@ -57,8 +57,8 @@ const         {/*cout<<"CONST"<<endl;*/return  CONST;}
 ">="            {/*cout<<">="<<endl;*/return  GTE;}
 "!="            {/*cout<<"!="<<endl;*/return  NE; }
 ":"             {/*cout<<":"<<endl;*/return  COLON;}
-"{"             {/*cout<<"{"<<endl;*/return LC;}
-"}"             {/*cout<<"}"<<endl;*/return RC;}
+"{"             {/*cout<<"{"<<endl;*/return *yytext;}
+"}"             {/*cout<<"}"<<endl;*/return *yytext;}
 
 
 [ \t]           ; //ignore spaces, tabs and new line
@@ -66,7 +66,7 @@ const         {/*cout<<"CONST"<<endl;*/return  CONST;}
 {digit}+            {  /*cout<<"integer : " <<atoi(yytext) <<endl;*/ yylval.ival = atoi(yytext); return  INUM; }
 [0-9]+\.?[0-9]+	  {  /*cout<<"float : " <<atof(yytext) <<endl;*/ yylval.fval = atof(yytext); return  FNUM; }
 {letter}({letter}|{digit})*     {/*cout<<"identifier : " <<strdup(yytext) <<endl;*/   yylval.sval = strdup(yytext);return  IDENTIFIER;}
-;               {return  ENDL;}
+;               {return  SEMICOLON;}
 
 
 %%

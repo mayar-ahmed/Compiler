@@ -5,6 +5,7 @@ float f;
 bool un;
 
 begin
+i=true;
 f = i2+i;
 i2=10;
 i=i2*2;

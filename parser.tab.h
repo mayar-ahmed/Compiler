@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ENDL = 258,
+    SEMICOLON = 258,
     END = 259,
     PROGRAM = 260,
     CONST = 261,
@@ -68,35 +68,30 @@ extern int yydebug;
     DEFAULT = 278,
     BREAK = 279,
     CONTINUE = 280,
-    ASSIGN = 281,
-    PLUS = 282,
-    MINUS = 283,
-    MUL = 284,
-    DIV = 285,
-    LB = 286,
-    RB = 287,
-    GTE = 288,
-    LTE = 289,
-    GT = 290,
-    LT = 291,
-    EQ = 292,
-    NE = 293,
-    LC = 294,
-    COLON = 295,
-    RC = 296,
-    DO = 297,
-    FOR = 298,
-    FNUM = 299,
-    INUM = 300,
-    TRUE = 301,
-    FALSE = 302,
-    IDENTIFIER = 303
+    PLUS = 281,
+    MINUS = 282,
+    MUL = 283,
+    DIV = 284,
+    GTE = 285,
+    LTE = 286,
+    GT = 287,
+    LT = 288,
+    EQ = 289,
+    NE = 290,
+    COLON = 291,
+    DO = 292,
+    FOR = 293,
+    FNUM = 294,
+    INUM = 295,
+    TRUE = 296,
+    FALSE = 297,
+    IDENTIFIER = 298
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
 #line 29 "parser.y" /* yacc.c:1909  */
@@ -108,8 +103,10 @@ union YYSTYPE
 	struct exptype *eval;
 	struct num *nval;
 
-#line 112 "parser.tab.h" /* yacc.c:1909  */
+#line 107 "parser.tab.h" /* yacc.c:1909  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

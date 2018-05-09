@@ -2621,6 +2621,30 @@ cout<<line<<": Result: "<<res<<endl;
 t->name=NULL;
 t->id=0;
 }
+
+exptype*checkNot(exptype*e){
+/*
+exptype* t = (exptype*)malloc(sizeof(struct exptype));
+if(!isDeclared(e->name)){
+t->type=0;
+t->val=NULL;
+t->name=NULL;
+t->id=0
+return t;
+}
+if(e->type!=3){
+}
+if(!isInit(e->name)){
+t->type=0;
+t->val=NULL;
+t->name=NULL;
+t->id=0
+return t;
+}
+*/
+
+}
+
 void checkCond(exptype*e){
 if(e->id==1){
 if(!isDeclared(e->name)){

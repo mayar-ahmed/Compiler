@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -186,7 +186,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
 #line 45 "parser.y" /* yacc.c:355  */
@@ -200,6 +200,8 @@ union YYSTYPE
 
 #line 202 "parser.tab.c" /* yacc.c:355  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -213,7 +215,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 217 "parser.tab.c" /* yacc.c:358  */
+#line 219 "parser.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -1425,319 +1427,319 @@ yyreduce:
         case 2:
 #line 126 "parser.y" /* yacc.c:1646  */
     { cout<< "program skeleton defined"<<endl; }
-#line 1429 "parser.tab.c" /* yacc.c:1646  */
+#line 1431 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 129 "parser.y" /* yacc.c:1646  */
     {(yyval.ival)=1;}
-#line 1435 "parser.tab.c" /* yacc.c:1646  */
+#line 1437 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 130 "parser.y" /* yacc.c:1646  */
     {(yyval.ival)=2;}
-#line 1441 "parser.tab.c" /* yacc.c:1646  */
+#line 1443 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
 #line 131 "parser.y" /* yacc.c:1646  */
     {(yyval.ival)=3;}
-#line 1447 "parser.tab.c" /* yacc.c:1646  */
+#line 1449 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 134 "parser.y" /* yacc.c:1646  */
     {addConst((yyvsp[-2].sval),(yyvsp[-3].ival),iToCa((yyvsp[0].ival)),1);/*cout << "constant defined " << $3<<endl;*/}
-#line 1453 "parser.tab.c" /* yacc.c:1646  */
+#line 1455 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 135 "parser.y" /* yacc.c:1646  */
     {addConst((yyvsp[-2].sval),(yyvsp[-3].ival),fToCa((yyvsp[0].fval)),2);}
-#line 1459 "parser.tab.c" /* yacc.c:1646  */
+#line 1461 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 136 "parser.y" /* yacc.c:1646  */
     {addConst((yyvsp[-2].sval),(yyvsp[-3].ival),(yyvsp[0].sval),3);/*cout << "constant defined " << $3<<endl;*/}
-#line 1465 "parser.tab.c" /* yacc.c:1646  */
+#line 1467 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 137 "parser.y" /* yacc.c:1646  */
     {addVar((yyvsp[0].sval),(yyvsp[-1].ival)); /*cout << "variable defined " << $2 <<endl;*/}
-#line 1471 "parser.tab.c" /* yacc.c:1646  */
+#line 1473 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 150 "parser.y" /* yacc.c:1646  */
     {/*cout <<line<<": assignemt statemet" <<endl;*/}
-#line 1477 "parser.tab.c" /* yacc.c:1646  */
+#line 1479 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 151 "parser.y" /* yacc.c:1646  */
     {/*cout <<line<<": if statemet" <<endl;*/}
-#line 1483 "parser.tab.c" /* yacc.c:1646  */
+#line 1485 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 152 "parser.y" /* yacc.c:1646  */
     {/*cout <<"while loop " <<endl;*/}
-#line 1489 "parser.tab.c" /* yacc.c:1646  */
+#line 1491 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 153 "parser.y" /* yacc.c:1646  */
     {/*cout <<"do while loop" <<endl;*/}
-#line 1495 "parser.tab.c" /* yacc.c:1646  */
+#line 1497 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 154 "parser.y" /* yacc.c:1646  */
     {/*cout << "for loop" ;*/}
-#line 1501 "parser.tab.c" /* yacc.c:1646  */
+#line 1503 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 155 "parser.y" /* yacc.c:1646  */
     {/*cout <<"switch statemet" <<endl;*/}
-#line 1507 "parser.tab.c" /* yacc.c:1646  */
+#line 1509 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
 #line 156 "parser.y" /* yacc.c:1646  */
-    {checkBreak();addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}
-#line 1513 "parser.tab.c" /* yacc.c:1646  */
+    {checkBreak();/*addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);*/}
+#line 1515 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
 #line 157 "parser.y" /* yacc.c:1646  */
     {checkContinue();addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);}
-#line 1519 "parser.tab.c" /* yacc.c:1646  */
+#line 1521 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 162 "parser.y" /* yacc.c:1646  */
     {(yyval.sval)=(char*)"1";}
-#line 1525 "parser.tab.c" /* yacc.c:1646  */
+#line 1527 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 163 "parser.y" /* yacc.c:1646  */
     {(yyval.sval)=(char*)"0";}
-#line 1531 "parser.tab.c" /* yacc.c:1646  */
+#line 1533 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 166 "parser.y" /* yacc.c:1646  */
     {checkAssignExp((yyvsp[-2].sval),(yyvsp[0].eval));addQuad((char*)"=",(yyvsp[0].eval)->name,NULL,(yyvsp[-2].sval));}
-#line 1537 "parser.tab.c" /* yacc.c:1646  */
+#line 1539 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 168 "parser.y" /* yacc.c:1646  */
     {checkAssignBool((yyvsp[-2].sval),(yyvsp[0].sval));char* v;if((yyvsp[0].sval)=="1")v=(char*)"true";else v=(char*)"false";addQuad((char*)"=",v,NULL,(yyvsp[-2].sval));}
-#line 1543 "parser.tab.c" /* yacc.c:1646  */
+#line 1545 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 179 "parser.y" /* yacc.c:1646  */
     {(yyval.fval)=(yyvsp[0].fval);}
-#line 1549 "parser.tab.c" /* yacc.c:1646  */
+#line 1551 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 180 "parser.y" /* yacc.c:1646  */
     {(yyval.fval)=-1*(yyvsp[0].fval);}
-#line 1555 "parser.tab.c" /* yacc.c:1646  */
+#line 1557 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 181 "parser.y" /* yacc.c:1646  */
     {(yyval.ival)=(yyvsp[0].ival);}
-#line 1561 "parser.tab.c" /* yacc.c:1646  */
+#line 1563 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 182 "parser.y" /* yacc.c:1646  */
     {(yyval.ival)=-1*(yyvsp[0].ival);}
-#line 1567 "parser.tab.c" /* yacc.c:1646  */
+#line 1569 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
 #line 183 "parser.y" /* yacc.c:1646  */
     {(yyval.nval)=createNum(2,fToCa((yyvsp[0].fval)));}
-#line 1573 "parser.tab.c" /* yacc.c:1646  */
+#line 1575 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
 #line 184 "parser.y" /* yacc.c:1646  */
     {(yyval.nval)=createNum(1,iToCa((yyvsp[0].ival)));}
-#line 1579 "parser.tab.c" /* yacc.c:1646  */
+#line 1581 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
 #line 187 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = createExpr(2,fToCa((yyvsp[0].fval)),0,NULL);(yyval.eval)->name=addQuad((char*)"=",fToCa((yyvsp[0].fval)),NULL,NULL);}
-#line 1585 "parser.tab.c" /* yacc.c:1646  */
+#line 1587 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 188 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = createExpr(1,iToCa((yyvsp[0].ival)),0,NULL);(yyval.eval)->name=addQuad((char*)"=",iToCa((yyvsp[0].ival)),NULL,NULL);}
-#line 1591 "parser.tab.c" /* yacc.c:1646  */
+#line 1593 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
 #line 189 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = createExpr(0,NULL,1,(yyvsp[0].sval));}
-#line 1597 "parser.tab.c" /* yacc.c:1646  */
+#line 1599 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 190 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkArithm((yyvsp[-2].eval),'+',(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"+",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1603 "parser.tab.c" /* yacc.c:1646  */
+#line 1605 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 191 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkArithm((yyvsp[-2].eval),'-',(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"-",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1609 "parser.tab.c" /* yacc.c:1646  */
+#line 1611 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 192 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkArithm((yyvsp[-2].eval),'*',(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"*",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1615 "parser.tab.c" /* yacc.c:1646  */
+#line 1617 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
 #line 193 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkArithm((yyvsp[-2].eval),'/',(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"/",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1621 "parser.tab.c" /* yacc.c:1646  */
+#line 1623 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
 #line 194 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)">" ,(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)">",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1627 "parser.tab.c" /* yacc.c:1646  */
+#line 1629 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 195 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)">=",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)">=",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1633 "parser.tab.c" /* yacc.c:1646  */
+#line 1635 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 196 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)"<" ,(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"<",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1639 "parser.tab.c" /* yacc.c:1646  */
+#line 1641 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 197 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)"<=",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"<=",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1645 "parser.tab.c" /* yacc.c:1646  */
+#line 1647 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 198 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)"!=",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"!=",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1651 "parser.tab.c" /* yacc.c:1646  */
+#line 1653 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
 #line 199 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkComparison((yyvsp[-2].eval),(char*)"==",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"==",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1657 "parser.tab.c" /* yacc.c:1646  */
+#line 1659 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 200 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkBoolComparison((yyvsp[-2].eval),(char*)"==",(yyvsp[0].bval));(yyval.eval)->name=addQuad((char*)"==",(yyvsp[-2].eval)->name,(char*)"true",NULL);}
-#line 1663 "parser.tab.c" /* yacc.c:1646  */
+#line 1665 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 201 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkBoolComparison((yyvsp[-2].eval),(char*)"==",(yyvsp[0].bval));(yyval.eval)->name=addQuad((char*)"==",(yyvsp[-2].eval)->name,(char*)"false",NULL);}
-#line 1669 "parser.tab.c" /* yacc.c:1646  */
+#line 1671 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 202 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkBoolComparison((yyvsp[-2].eval),(char*)"!=",(yyvsp[0].bval));(yyval.eval)->name=addQuad((char*)"!=",(yyvsp[-2].eval)->name,(char*)"true",NULL);}
-#line 1675 "parser.tab.c" /* yacc.c:1646  */
+#line 1677 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
 #line 203 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkBoolComparison((yyvsp[-2].eval),(char*)"!=",(yyvsp[0].bval));(yyval.eval)->name=addQuad((char*)"!=",(yyvsp[-2].eval)->name,(char*)"false",NULL);}
-#line 1681 "parser.tab.c" /* yacc.c:1646  */
+#line 1683 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
 #line 204 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkLogical((yyvsp[-2].eval),(char*)"&",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"and",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1687 "parser.tab.c" /* yacc.c:1646  */
+#line 1689 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 205 "parser.y" /* yacc.c:1646  */
     {(yyval.eval) = checkLogical((yyvsp[-2].eval),(char*)"|",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"or",(yyvsp[-2].eval)->name,(yyvsp[0].eval)->name,NULL);}
-#line 1693 "parser.tab.c" /* yacc.c:1646  */
+#line 1695 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
 #line 206 "parser.y" /* yacc.c:1646  */
-    {(yyval.eval) = checkLogical(NULL,(char*)"!",(yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"not",(yyvsp[0].eval)->name,NULL,NULL);}
-#line 1699 "parser.tab.c" /* yacc.c:1646  */
+    {(yyval.eval) = checkNot((yyvsp[0].eval));(yyval.eval)->name=addQuad((char*)"not",(yyvsp[0].eval)->name,NULL,NULL);}
+#line 1701 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
 #line 207 "parser.y" /* yacc.c:1646  */
     {(yyval.eval)=(yyvsp[-1].eval);}
-#line 1705 "parser.tab.c" /* yacc.c:1646  */
+#line 1707 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 214 "parser.y" /* yacc.c:1646  */
     {checkCond((yyvsp[0].eval));addQuad((char*)"false",iToCa(label),(yyvsp[0].eval)->name,NULL);labels.push_back(label);label++;}
-#line 1711 "parser.tab.c" /* yacc.c:1646  */
+#line 1713 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 216 "parser.y" /* yacc.c:1646  */
     {addQuad((char*)"goto",iToCa(label),NULL,NULL);addQuad((char*)"l",iToCa(labels.back()),NULL,NULL); 			labels.pop_back();labels.push_back(label);label++;}
-#line 1717 "parser.tab.c" /* yacc.c:1646  */
+#line 1719 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
 #line 217 "parser.y" /* yacc.c:1646  */
     {addQuad((char*)"l",iToCa(labels.back()),NULL,NULL);labels.pop_back();}
-#line 1723 "parser.tab.c" /* yacc.c:1646  */
+#line 1725 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
 #line 219 "parser.y" /* yacc.c:1646  */
     {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();label--;}
-#line 1729 "parser.tab.c" /* yacc.c:1646  */
+#line 1731 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
 #line 220 "parser.y" /* yacc.c:1646  */
     {checkCond((yyvsp[0].eval));addQuad((char*)"false",iToCa(label),(yyvsp[0].eval)->name,NULL);label--;push_l();label++;}
-#line 1735 "parser.tab.c" /* yacc.c:1646  */
+#line 1737 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
 #line 221 "parser.y" /* yacc.c:1646  */
     {lCount++;}
-#line 1741 "parser.tab.c" /* yacc.c:1646  */
+#line 1743 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
@@ -1745,75 +1747,75 @@ yyreduce:
     {lCount--;
 		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
-#line 1749 "parser.tab.c" /* yacc.c:1646  */
+#line 1751 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
 #line 226 "parser.y" /* yacc.c:1646  */
     {lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();push_l();}
-#line 1755 "parser.tab.c" /* yacc.c:1646  */
+#line 1757 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
 #line 227 "parser.y" /* yacc.c:1646  */
     {lCount--;}
-#line 1761 "parser.tab.c" /* yacc.c:1646  */
+#line 1763 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
 #line 227 "parser.y" /* yacc.c:1646  */
     {addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
-#line 1767 "parser.tab.c" /* yacc.c:1646  */
+#line 1769 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
 #line 228 "parser.y" /* yacc.c:1646  */
     {checkCond((yyvsp[0].eval));addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),(yyvsp[0].eval)->name,NULL);
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();}
-#line 1774 "parser.tab.c" /* yacc.c:1646  */
+#line 1776 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 241 "parser.y" /* yacc.c:1646  */
     {checkType((yyvsp[0].sval),1,2);}
-#line 1780 "parser.tab.c" /* yacc.c:1646  */
+#line 1782 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
 #line 241 "parser.y" /* yacc.c:1646  */
     {sCount++;}
-#line 1786 "parser.tab.c" /* yacc.c:1646  */
+#line 1788 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
 #line 241 "parser.y" /* yacc.c:1646  */
     {sCount--;}
-#line 1792 "parser.tab.c" /* yacc.c:1646  */
+#line 1794 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
 #line 249 "parser.y" /* yacc.c:1646  */
     {checkType((yyvsp[0].sval),1,1);}
-#line 1798 "parser.tab.c" /* yacc.c:1646  */
+#line 1800 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
 #line 249 "parser.y" /* yacc.c:1646  */
     {checkAssignExp((yyvsp[-3].sval),(yyvsp[0].eval));addQuad((char*)"=",(yyvsp[0].eval)->name,NULL,(yyvsp[-3].sval));
 	addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();}
-#line 1805 "parser.tab.c" /* yacc.c:1646  */
+#line 1807 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 251 "parser.y" /* yacc.c:1646  */
     {checkType((yyvsp[-8].sval),(yyvsp[0].nval)->type,3);addQuad((char*)"false",iToCa(label),(yyvsp[-2].eval)->name,NULL);push_l();push_l();}
-#line 1811 "parser.tab.c" /* yacc.c:1646  */
+#line 1813 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
 #line 252 "parser.y" /* yacc.c:1646  */
     {lCount++;}
-#line 1817 "parser.tab.c" /* yacc.c:1646  */
+#line 1819 "parser.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
@@ -1823,11 +1825,11 @@ yyreduce:
 	addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);
 	addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);
 	loop_labels.pop_back();loop_labels.pop_back();}
-#line 1827 "parser.tab.c" /* yacc.c:1646  */
+#line 1829 "parser.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1831 "parser.tab.c" /* yacc.c:1646  */
+#line 1833 "parser.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2164,26 +2166,43 @@ void push_l()
 /** Functions used for semantic analysis **/
 
 void checkType(char*id,int t,int m){
-if(!isDeclared(id)){
-return;
-}
+if(isDeclared(id))
+symbolTable[id]->used=1;
 //Switch case
 if(m==2){
+if(!isDeclared(id)){
+err=true;
+msg(undeclared,line,id,NULL);
+return;
+}
 if(!isInit(id)){
+err=true;
 msg(uninit,line,id,NULL);
 return;
 }
 }
 else if(m==1){
+	if(!isDeclared(id)){
+	err=true;
+	return;
+	}
 	if(symbolTable[id]->type !=1 && symbolTable[id]->type !=2){
+	err=true;
 	printf("Semantic ERROR line: %d :: Loop counter must have int or float type",line);
 	}
 }
 else{
+	if(!isDeclared(id)){
+	err=true;
+	return;
+	}
 	if(symbolTable[id]->type == 2)
 		return;
-	if(t!=1)
-	printf("Semantic ERROR line: %d :: Step has to be integer for integer counter",line);
+	if(t!=1){
+	err=true;
+	printf("Semantic ERROR line: %d :: Step has to be integer for integer counter\n",line);
+}
+
 }
 }
 void checkUnused(){
@@ -2248,11 +2267,13 @@ return symbolTable[id]->val!=NULL;
 
 void checkBreak(){
 if(lCount == 0 && sCount==0){
+err=true;
 msg(brk,line,NULL,NULL);
 }
 }
 void checkContinue(){
 if(lCount == 0){
+err=true;
 msg(cont,line,NULL,NULL);
 }
 }
@@ -2261,12 +2282,14 @@ msg(cont,line,NULL,NULL);
 void addConst(char*id, int t1,char* val, int t2){
 
 if(isDeclared(id)){
+err=true;
 printf("Semantic ERROR line: %d :: Multiple declarations for Const %s",line,id);
 return;
 }
 symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
 
 if(t1!=t2){
+err=true;
 msg(assignMismatch,line,types[t2],types[t1]);
 d->val=NULL;
 }
@@ -2286,7 +2309,9 @@ printf("%d: %s Const %s %s\n",line,types[t1],id,d->val);
 
 void addVar(char*id, int t){
 if(isDeclared(id))
-{printf("Semantic ERROR line: %d :: Multiple declarations for variable %s \n",line,id);
+{
+err=true;
+printf("Semantic ERROR line: %d :: Multiple declarations for variable %s \n",line,id);
 return;
 }
 
@@ -2301,18 +2326,22 @@ printf("%d: %s Var %s %s\n",line,types[t],id,d->val);
 /********************Bool Assignment Statement Check***********/
 void checkAssignBool(char*id1,char*bolval){
 if(!isDeclared(id1)){
+err=true;
 msg(undeclared,line,id1,NULL);
 return;
 }
-	symbolData* d = symbolTable[id1];
+symbolData* d = symbolTable[id1];
 //Constant can't be changed
 if(d->cl == 1){
+err=true;
 printf("Semantic ERROR line: %d :: Invalid Assignment to a constant\n",line);
 return;
 }
 //Check type mismatch
 if(d->type != 3){
-msg(assignMismatch,line,types[3],types[d->type]);
+err=true;
+if(d->type!=0)
+	msg(assignMismatch,line,types[3],types[d->type]);
 return;
 }
 
@@ -2325,19 +2354,23 @@ void checkAssignExp(char*id1,exptype*e){
 
 //Check identifier is declared prevoiusly
 if(!isDeclared(id1)){
+	err=true;
 	msg(undeclared,line,id1,NULL);
 	return;
 }
 
 if(e->id){
 	if(!isDeclared(e->name)){
+	err=true;	
 	return;
 	}
-	
-	else if (!isInit(e->name)){
-	msg(assignMismatch,line,types[e->type],types[symbolTable[id1]->type]);
-	//msg(uninit,line,e->name,NULL);
+	else{ 
+	symbolTable[e->name]->used=1;
+	if (!isInit(e->name)){
+	err=true;
+	printf("Semantic ERROR line: %d :: RHS has no value, LHS unchanged! \n",line);
 	return;
+	}
 	}
 }
 
@@ -2345,26 +2378,27 @@ if(e->id){
 symbolData* d = symbolTable[id1];
 //Constant can't be changed
 if(d->cl == 1){
+err=true;
 printf("Semantic ERROR line: %d :: Invalid Assignment to a constant\n",line);
 return;
 }
 //
 if(e->val == NULL){
+err=true;
 printf("Semantic ERROR line: %d :: RHS has no value, LHS unchanged! \n",line);
 return;
 }
 //Check type mismatch
 if(d->type != e->type){
-msg(assignMismatch,line,types[e->type],types[d->type]);
+err=true;
+if(e->type!=0 && d->type!=0)
+	msg(assignMismatch,line,types[e->type],types[d->type]);
 return;
 }
 
 d->val = (char*)malloc(sizeof(e->val));
 strncpy(d->val,e->val,sizeof(d->val));
-if(e->id==1)
-{
-symbolTable[e->name]->used=1;
-}
+
 printf("%d: %s %s %s \n",line,types[d->type],id1,d->val);
 }
 /*******************Create Expression *******************/
@@ -2374,13 +2408,7 @@ n->type=t;
 n->val=v;
 return n;
 }
-/*
-fnum 		{$$ = createExpr(2,fToCa($1),0,NULL); }
-inum 		{$$ = createExpr(1,iToCa($1),0,NULL);}
-IDENTIFIER 	{$$ = createExpr(0,NULL,1,$1);} 
-*/
 
-//1,NULL,1,$1 
 /*******************Create Expression *******************/
 exptype*createExpr(int i, char* c, int id1, char*n){
 
@@ -2390,11 +2418,13 @@ if(id1==1)
 {
 	if(!isDeclared(n))
 	{
+		err=true;
 		msg(undeclared,line,n,NULL);
 		t->type=0;
 		t->val = NULL;
 	}
 	else if(!isInit(n)){
+		err=true;
 		msg(uninit,line,n,NULL);
 		t->type=symbolTable[n]->type;
 		t->val = NULL;
@@ -2418,16 +2448,18 @@ return t;
 /*********************   Check Arithmetic Operations ******************/
 exptype* checkArithm(exptype*e1,char op,exptype*e2){
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
+//Mark Used Variables
+if(isDeclared(e1->name))
+symbolTable[e1->name]->used=1;
+
+if(isDeclared(e2->name))
+symbolTable[e2->name]->used=1;
 
 if(invalidExpressions(e1,e2)){
-	if(isDeclared(e1->name))
-		t->type=e1->type;
-	else
-		t->type=0;
+	t->type=0;
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
-
 return t;
 }
 
@@ -2435,7 +2467,9 @@ return t;
 //One of the expressions is bool
 if(e1->type==3 || e2->type==3)
 {
-	msg(numerical,line,NULL,NULL);
+	err=true;
+	if(e1->type!=0 && e2->type!=0)
+		msg(numerical,line,NULL,NULL);
 	t->type=0;
 	t->val=NULL;
 	t->name=NULL;
@@ -2443,11 +2477,7 @@ if(e1->type==3 || e2->type==3)
 	return t;
 }
 
-//Mark Used Variables
-if(e1->id)
-symbolTable[e1->name]->used=1;
-if(e2->id)
-symbolTable[e2->name]->used=1;
+
 
 //One of the expressions is float
 if(e1->type == 2 || e2->type == 2)
@@ -2531,11 +2561,22 @@ case '/':
 /******************** Check Comparison statements ******************/
 exptype* checkComparison(exptype*e1,char*op,exptype*e2){
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
+
+//Mark Used Variables
+if(isDeclared(e1->name))
+symbolTable[e1->name]->used=1;
+
+if(isDeclared(e2->name))
+symbolTable[e2->name]->used=1;
+
+
 //One of the expressions is not integer or float
 if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
 {
 	//Comparison operands must have numerical values only
 	if(op != "!="&&op!="=="){
+		err=true;
+		if(e1->type!=0 && e2->type!=0)
 		msg(numerical,line,NULL,NULL);
 		t->type = 0;
 		t->val = NULL;
@@ -2546,10 +2587,8 @@ if((e1->type != 1 && e1->type != 2) || (e2->type != 1 && e2->type != 2))
 }
 
 if(invalidExpressions(e1,e2)){
-	if(isDeclared(e1->name))
-		t->type=e1->type;
-	else
-		t->type=0;
+	err=true;
+	t->type=0;
 	t->val=NULL;
 	t->name=NULL;
 	t->id=0;
@@ -2559,12 +2598,6 @@ return t;
 
 //Compare 2 integers
 if(e1->type == 1 && e2->type==1){
-	
-	//Mark Used Variables
-	if(e1->id)
-	symbolTable[e1->name]->used=1;
-	if(e2->id)
-	symbolTable[e2->name]->used=1;
 
 	long x1 = (long)atoi(e1->val);
 	long x2 = (long)atoi(e2->val);
@@ -2582,12 +2615,6 @@ if(e1->type == 1 && e2->type==1){
 
 //Compare 2 floats
 if(e1->type == 2 && e2->type==2){
-	
-	//Mark Used Variables
-	if(e1->id)
-	symbolTable[e1->name]->used=1;
-	if(e2->id)
-	symbolTable[e2->name]->used=1;
 
 	double x1 = (double)atoi(e1->val);
 	double x2 = (double)atoi(e2->val);
@@ -2607,6 +2634,7 @@ if(e1->type == 2 && e2->type==2){
 if(e1->type == 3 && e2->type==3){
 	if(op!="!=" && op!="==")
 	{
+	err=true;
 	printf("Semantic ERROR line: %d :: Can't Compare boolean values \n",line);
 	t->type = 0;
 	t->val = NULL;
@@ -2614,12 +2642,6 @@ if(e1->type == 3 && e2->type==3){
 	t->name = NULL;
 	return t;
 	}
-	
-	//Mark Used Variables
-	if(e1->id)
-	symbolTable[e1->name]->used=1;
-	if(e2->id)
-	symbolTable[e2->name]->used=1;
 
 	bool x1,x2;
 	if(e1->val=="1")
@@ -2642,8 +2664,8 @@ if(e1->type == 3 && e2->type==3){
 	t->name = NULL;
 	return t;
 }
-
-msg(compareMismatch,line,types[e1->type],types[e2->type]);
+if(e1->type!=0 && e2->type!=0)
+	msg(compareMismatch,line,types[e1->type],types[e2->type]);
 t->type =0;
 t->val = NULL;
 t->id = 0;
@@ -2654,17 +2676,25 @@ return t;
 /******************************Check boolean comparison***********************************/
 exptype* checkBoolComparison(exptype*e,char*op,bool bolval){
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
+//Mark used variables
+if(e->id && isDeclared(e->name))
+symbolTable[e->name]->used=1;
+
 bool v=false;
 if(e->id &&!isDeclared(e->name)){
+err=true;
 msg(undeclared,line,e->name,NULL);
 v=true;
 }
 else if(e->type!=3){
-msg(compareMismatch,line,types[e->type],types[3]);
+err=true;
+if(e->type!=0)
+	msg(compareMismatch,line,types[e->type],types[3]);
 v=true;
 }
 //uninitialized
 else if (e->id && !isInit(e->name)){
+err=true;
 msg(uninit,line,e->name,NULL);
 v=true;
 }
@@ -2677,9 +2707,6 @@ t->name = NULL;
 return t;
 }
 
-//Mark Used Variables
-if(e->id)
-symbolTable[e->name]->used=1;
 
 bool x1;
 if(e->val == "1")
@@ -2704,26 +2731,20 @@ exptype* t = (exptype*)malloc(sizeof(struct exptype));
 //One of the expressions is not boolean
 bool v = false;
 if(e1->type!=3 || e2->type!=3){
-printf("Semantic ERROR line: %d :: Both values have to be bool \n",line);
+err=true;
+if(e1->type!=0 && e2->type!=0)
+	printf("Semantic ERROR line: %d :: Both values have to be bool \n",line);
 v=true;
 }
 //One of them is undeclared or unintialiazed
 if(invalidExpressions(e1,e2)||v){
-if(isDeclared(e1->name))
-		t->type=e1->type;
-	else
-		t->type=0;
+err=true;
+t->type=0;
 t->val=NULL;
 t->name=NULL;
 t->id=0;
 return t;
 }
-
-//Mark Used Variables
-if(e1->id)
-symbolTable[e1->name]->used=1;
-if(e2->id)
-symbolTable[e2->name]->used=1;
 
 bool x1 = (strcmp(e1->val,"1")==0)?true:false; 
 bool x2 = (strcmp(e2->val,"1")==0)?true:false;
@@ -2736,40 +2757,55 @@ t->id=0;
 }
 
 exptype*checkNot(exptype*e){
-/*
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
 if(!isDeclared(e->name)){
-t->type=0;
+err=true;
+t->type=3;
 t->val=NULL;
 t->name=NULL;
-t->id=0
+t->id=0;
 return t;
 }
 if(e->type!=3){
-}
-if(!isInit(e->name)){
-t->type=0;
+printf("Semantic ERROR line: %d :: Can't apply NOT on %s variable!\n",line,types[e->type]);
+err=true;
+t->type=3;
 t->val=NULL;
 t->name=NULL;
-t->id=0
+t->id=0;
 return t;
 }
-*/
+
+
+bool x = (strcmp(e->val,"1")==0)?true:false;
+if(!x)
+t->val=(char*)"1";
+else
+t->val=(char*)"0";
+
+t->type=3;
+t->name=NULL;
+t->id=0;
+return t;
 
 }
 
 void checkCond(exptype*e){
 if(e->id==1){
 if(!isDeclared(e->name)){
+err=true;
 msg(undeclared,line,e->name,NULL);
 return;
 }
 if(!isInit(e->name))
+err=true;
 msg(uninit,line,e->name,NULL);
 return;
 }
 if(e->type!=3){
-printf("Semantic ERROR line: %d :: Condition must have a bool value \n",line);
+err=true;
+if(e->type!=0)
+	printf("Semantic ERROR line: %d :: Condition must have a bool value \n",line);
 }
 }
 bool logical(bool x1, char*op,bool x2){
@@ -2791,12 +2827,12 @@ if(e1->id){
 	udec1=true;
 	return true;
 	}
+	symbolTable[e1->name]->used=1;
 	//uninitialized
-	else if (!isInit(e1->name)){
+	if (!isInit(e1->name)){
 	uin1=true;
 	}
-	if(!udec1 && !uin1)
-		symbolTable[e1->name]->used=1;
+		
 }
 //Expression 2 is identifier
 if(e2->id){
@@ -2804,14 +2840,14 @@ if(e2->id){
 	if(!isDeclared(e2->name)){
 	udec2=true;
 	return true;
-	}	
+	}
+	symbolTable[e2->name]->used=1;	
 	//uninitialized
 	if (!isInit(e2->name)){
 	uin2=true;
 
 	}
-	if(!udec2&&!uin2)
-		symbolTable[e2->name]->used=1;
+		
 }
 
 return (udec1 || udec2 || uin1 || uin2);

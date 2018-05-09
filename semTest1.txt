@@ -1,16 +1,25 @@
 program	
-int i;
+int i1;
 int i2;
 float f;
-bool un;
+bool x;
+bool y;
+bool z;
 
 begin
+
 i=true;
-f = i2+i;
+f = i2;
 i2=10;
 i=i2*2;
 i2=i/0;
 f=10.5;
 f=f-5;
+
+x = true;
+y = false;
+
+z = not x;
+z = y and x;
 
 end

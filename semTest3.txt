@@ -1,15 +1,23 @@
 program	
 int x;
 int i;
+bool i;
 int j;
 bool r;
 begin
 
 x=q;
+i=true;
+r=10;
+i=j;
+r=x-y>3;
+
+
 x = 100;
 i = 200;
+r=true;
 
-r=x-y>3;
+
 
 switch(o)
 {
@@ -30,7 +38,7 @@ continue;
 endif;
 };
 continue;
-for(l=1:j<10:1)
+for(j=1:j<10:1.5)
 {
 if(r and j<7)then
 break;

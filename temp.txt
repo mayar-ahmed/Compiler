@@ -3,15 +3,31 @@ int i;
 int i2;
 float f;
 bool un;
+bool x;
 
 begin
-i=true;
-f=i;
-f = i2+i;
+i=5;
 i2=10;
-i=i2*2;
-i2=i/0;
-f=10.5;
-f=f-5;
+x=true;
+for(i2=6:i2<i:-8)
+{
+	i=i2+i2;
+	do
+	{
+		x=false;
+		while(i==8)
+		{
+			i=i+1;
+			if(x==true)then
+				break;
+			else
+				continue;
+			endif;
+			i2=9;
+		};
+		un=false;
+	}while(i==999);
+	i=543;
+};
 
 end

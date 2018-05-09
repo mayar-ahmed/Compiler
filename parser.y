@@ -4,6 +4,8 @@
 #include<cstring>
 #include"semantics.h"
 #include<map>
+#include<list>
+#include<vector>
 using namespace std;
 
 // stuff from flex that bison needs to know about:
@@ -22,7 +24,21 @@ return strcmp(a,b)<0;
 };
 map<char*,symbolData*,cmp_str> symbolTable;
 map <int,char*> types;
-
+///////// Quadruples//////////
+FILE *file = fopen("quad.txt", "w");
+struct code
+{
+	char* opr;
+	char* opd1;
+	char* opd2;
+	char* res;
+};
+list<code> quads;
+int tmp_count=0;
+int label=0;
+bool err=false;
+vector<int> labels;
+vector<int> loop_labels;
 %}
 %error-verbose
 //token types used  (kol elly elexer momken yraga3o)
@@ -137,8 +153,8 @@ statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
         |do_while_stmt	{/*cout <<"do while loop" <<endl;*/}
         |for_stmt 	{/*cout << "for loop" ;*/}
         |switch_stmt    {/*cout <<"switch statemet" <<endl;*/}
-        |BREAK          {checkBreak();/*cout <<" break statement" <<endl;*/}
-        |CONTINUE  	{checkContinue();/*cout <<" cntinue statement" <<endl;*/}
+        |BREAK          {checkBreak();addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}
+        |CONTINUE  	{checkContinue();addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);}
         ;
         
 
@@ -147,8 +163,9 @@ bval : TRUE 	 {$$=(char*)"1";}
      | FALSE     {$$=(char*)"0";}
      ;
 
-assignment: IDENTIFIER '=' expr {checkAssignExp($1,$3);}
-            | IDENTIFIER '=' bval {checkAssignBool($1,$3);}
+assignment: IDENTIFIER '=' expr {checkAssignExp($1,$3);addQuad((char*)"=",$3->name,NULL,$1);}
+          |IDENTIFIER'='bval
+	  {checkAssignBool($1,$3);char* v;if($3=="1")v=(char*)"true";else v=(char*)"false";addQuad((char*)"=",v,NULL,$1);}
             ;
 
 /* to handle positive and negative numbers with out errors */
@@ -167,26 +184,26 @@ number: fnum {$$=createNum(2,fToCa($1));}
 | inum {$$=createNum(1,iToCa($1));};
     
 /* all kinds of expressions */
-expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);}
-    | inum 		{$$ = createExpr(1,iToCa($1),0,NULL);}
+expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);$$->name=addQuad((char*)"=",fToCa($1),NULL,NULL);}
+    | inum 		{$$ = createExpr(1,iToCa($1),0,NULL);$$->name=addQuad((char*)"=",iToCa($1),NULL,NULL);}
     | IDENTIFIER 	{$$ = createExpr(0,NULL,1,$1);} 
-    | expr PLUS expr 	{$$ = checkArithm($1,'+',$3);}
-    | expr MINUS expr 	{$$ = checkArithm($1,'-',$3);}
-    | expr MUL expr 	{$$ = checkArithm($1,'*',$3);}
-    | expr DIV expr 	{$$ = checkArithm($1,'/',$3);}
-    | expr GT expr	{$$ = checkComparison($1,(char*)">" ,$3);}	
-    | expr GTE expr	{$$ = checkComparison($1,(char*)">=",$3);}
-    | expr LT expr	{$$ = checkComparison($1,(char*)"<" ,$3);}
-    | expr LTE expr	{$$ = checkComparison($1,(char*)"<=",$3);}
-    | expr NE expr	{$$ = checkComparison($1,(char*)"!=",$3);}
-    | expr EQ expr	{$$ = checkComparison($1,(char*)"==",$3);}
-    | expr EQ TRUE	{$$ = checkBoolComparison($1,(char*)"==",$3);}
-    | expr EQ FALSE	{$$ = checkBoolComparison($1,(char*)"==",$3);}
-    | expr NE TRUE	{$$ = checkBoolComparison($1,(char*)"!=",$3);}
-    | expr NE FALSE	{$$ = checkBoolComparison($1,(char*)"!=",$3);}
-    | expr AND expr	{$$ = checkLogical($1,(char*)"&",$3);}
-    | expr OR expr 	{$$ = checkLogical($1,(char*)"|",$3);}
-    | NOT expr		{$$ = checkLogical(NULL,(char*)"!",$2);}
+    | expr PLUS expr 	{$$ = checkArithm($1,'+',$3);$$->name=addQuad((char*)"+",$1->name,$3->name,NULL);}
+    | expr MINUS expr 	{$$ = checkArithm($1,'-',$3);$$->name=addQuad((char*)"-",$1->name,$3->name,NULL);}
+    | expr MUL expr 	{$$ = checkArithm($1,'*',$3);$$->name=addQuad((char*)"*",$1->name,$3->name,NULL);}
+    | expr DIV expr 	{$$ = checkArithm($1,'/',$3);$$->name=addQuad((char*)"/",$1->name,$3->name,NULL);}
+    | expr GT expr	{$$ = checkComparison($1,(char*)">" ,$3);$$->name=addQuad((char*)">",$1->name,$3->name,NULL);}	
+    | expr GTE expr	{$$ = checkComparison($1,(char*)">=",$3);$$->name=addQuad((char*)">=",$1->name,$3->name,NULL);}
+    | expr LT expr	{$$ = checkComparison($1,(char*)"<" ,$3);$$->name=addQuad((char*)"<",$1->name,$3->name,NULL);}
+    | expr LTE expr	{$$ = checkComparison($1,(char*)"<=",$3);$$->name=addQuad((char*)"<=",$1->name,$3->name,NULL);}
+    | expr NE expr	{$$ = checkComparison($1,(char*)"!=",$3);$$->name=addQuad((char*)"!=",$1->name,$3->name,NULL);}
+    | expr EQ expr	{$$ = checkComparison($1,(char*)"==",$3);$$->name=addQuad((char*)"==",$1->name,$3->name,NULL);}
+    | expr EQ TRUE	{$$ = checkBoolComparison($1,(char*)"==",$3);$$->name=addQuad((char*)"==",$1->name,(char*)"true",NULL);}
+    | expr EQ FALSE	{$$ = checkBoolComparison($1,(char*)"==",$3);$$->name=addQuad((char*)"==",$1->name,(char*)"false",NULL);}
+    | expr NE TRUE	{$$ = checkBoolComparison($1,(char*)"!=",$3);$$->name=addQuad((char*)"!=",$1->name,(char*)"true",NULL);}
+    | expr NE FALSE	{$$ = checkBoolComparison($1,(char*)"!=",$3);$$->name=addQuad((char*)"!=",$1->name,(char*)"false",NULL);}
+    | expr AND expr	{$$ = checkLogical($1,(char*)"&",$3);$$->name=addQuad((char*)"and",$1->name,$3->name,NULL);}
+    | expr OR expr 	{$$ = checkLogical($1,(char*)"|",$3);$$->name=addQuad((char*)"or",$1->name,$3->name,NULL);}
+    | NOT expr		{$$ = checkLogical(NULL,(char*)"!",$2);$$->name=addQuad((char*)"not",$2->name,NULL,NULL);}
     | '(' expr ')'	{$$=$2;}
     ;
 /*
@@ -194,13 +211,22 @@ if_stmt: IF LB expr RB THEN statements ENDIF
         | IF LB expr RB THEN statements ELSE statements ENDIF
         ;
   */      
-if_: IF '(' expr{checkCond($3);} ')' THEN statements;
-if_else:ENDIF|ELSE statements ENDIF;
-if_stmt:if_ if_else;        
+if_: IF '(' expr{checkCond($3);addQuad((char*)"false",iToCa(label),$3->name,NULL);labels.push_back(label);label++;} ')'THEN 		statements;
+if_else:ENDIF
+	|ELSE {addQuad((char*)"goto",iToCa(label),NULL,NULL);addQuad((char*)"l",iToCa(labels.back()),NULL,NULL); 			labels.pop_back();labels.push_back(label);label++;}statements ENDIF;
+if_stmt:if_ if_else {addQuad((char*)"l",iToCa(labels.back()),NULL,NULL);labels.pop_back();};        
 
-while_stsmt: WHILE '(' expr {checkCond($3);} ')' '{'{lCount++;} statements '}'{lCount--;};
+while_stsmt: WHILE {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();label--;}
+		'(' expr {checkCond($4);addQuad((char*)"false",iToCa(label),$4->name,NULL);label--;push_l();label++;}
+		 ')' '{'{lCount++;} statements '}'{lCount--;
+		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
+		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();};
 
-do_while_stmt:DO '{'{lCount++;} statements '}'{lCount--;} WHILE '(' expr{checkCond($9);}')';
+
+do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();push_l();}
+		 statements '}'{lCount--;} WHILE '(' {addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
+		 expr{checkCond($10);addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),$10->name,NULL);
+		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();}')';
 
 
 /*  switch case definition*/
@@ -220,8 +246,15 @@ switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);} ')'  '{'{sCount++;} s_stm
 
 /* needs modification to make sure it's correct */
 
-for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);} COLON expr 
-COLON number{checkType($3,$11->type,3);} ')' '{'{lCount++;} statements '}'{lCount--;}; 
+for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);addQuad((char*)"=",$6->name,NULL,$3);
+	addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();} COLON expr 
+	COLON number{checkType($3,$11->type,3);addQuad((char*)"false",iToCa(label),$9->name,NULL);push_l();push_l();}
+	')' '{'{lCount++;} statements '}'
+	{lCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
+	addQuad((char*)"=",addQuad((char*)"+",$3,addQuad((char*)"=",$11->val,NULL,NULL),NULL),NULL,$3);
+	addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);
+	addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);
+	loop_labels.pop_back();loop_labels.pop_back();}; 
 
         
 /* old definition of expression */
@@ -261,12 +294,18 @@ int main(int, char**) {
 	}
 	// set flex to read from it instead of defaulting to STDIN:
 	yyin = myfile;
-	
+	// make sure it is valid:
+	if (!file) {
+		cout << "can't open file" << endl;
+		return -1;
+	}
 	// parse through the input until there is no more:
 	do {
 		yyparse();
 	} while (!feof(yyin));
 	checkUnused();
+	if(!err)
+		printQuads();
 	
 }
 
@@ -278,6 +317,68 @@ void yyerror(const char *s) {
 	exit(-1);
 }
 
+////////// Quadriples /////////////////
+char* addQuad(char* opr,char* opd1,char* opd2,char* res)
+{
+	struct code q;
+	q.opr=opr;
+	q.opd1=opd1;
+	q.opd2=opd2;
+	if(res==NULL && opr!=(char*)"false" && opr!=(char*)"true" && opr!=(char*)"l" && opr!=(char*)"goto")
+	{
+		char* t=(char*)"t";
+		char* tmp = (char *) malloc(1 + strlen(t)+ strlen(iToCa(tmp_count)) );
+		strcpy(tmp, t);
+		strcat(tmp, iToCa(tmp_count));
+		q.res=tmp;
+		tmp_count++;
+	}
+	else
+		q.res=res;
+	quads.push_back(q);
+	return q.res;
+}
+void printQuads()
+{
+	while(!quads.empty())
+	{
+		struct code q=quads.front();
+		if(q.opr==(char*)"false")
+		{
+			fprintf(file,"if not %s goto L%s\n",q.opd2,q.opd1);
+		}
+		else if(q.opr==(char*)"true")
+		{
+			fprintf(file,"if %s goto L%s\n",q.opd2,q.opd1);
+		}
+		else if(q.opr==(char*)"l")
+		{
+			fprintf(file,"L%s:\n",q.opd1);
+		}
+		else if(q.opr==(char*)"goto")
+		{
+			fprintf(file,"goto L%s\n",q.opd1);
+		}
+		else if(q.opr==(char*)"=")
+		{
+			fprintf(file, "%s %s %s\n",q.res,q.opr,q.opd1);
+		}
+		else if(q.opr==(char*)"not")
+		{
+			fprintf(file,"%s = %s %s",q.res,q.opr,q.opd1);
+		}
+		else
+		{
+			fprintf(file,"%s = %s %s %s\n",q.res,q.opd1,q.opr,q.opd2);
+		}
+		quads.pop_front();
+	}
+}
+void push_l()
+{
+	loop_labels.push_back(label);
+	label++;
+}
 /** Functions used for semantic analysis **/
 
 void checkType(char*id,int t,int m){

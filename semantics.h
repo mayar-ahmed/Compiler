@@ -49,3 +49,6 @@ void checkContinue();
 void checkUnused();
 num*createNum(int,char*);
 void checkType(char*id,int t,int m);
+char* addQuad(char* opr,char* opd1,char* opd2,char* res);
+void printQuads();
+void push_l();

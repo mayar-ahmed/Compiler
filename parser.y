@@ -6,6 +6,7 @@
 #include<map>
 #include<list>
 #include<vector>
+
 using namespace std;
 
 // stuff from flex that bison needs to know about:
@@ -15,7 +16,6 @@ extern "C" FILE *yyin;
 extern int line;
 int lCount,sCount;
 void yyerror(const char *s);
-
 struct cmp_str
 {
 bool operator()(char const*a, char const *b ){
@@ -126,25 +126,32 @@ vector<int> loop_labels;
 program : PROGRAM  declarations S  statements  END   { cout<< "program skeleton defined"<<endl; }
         ;
 
+err_stmt: error SEMICOLON {err=true;}
+	| error ')' {err=true;}
+	;
 type : INT {$$=1;}
 | FLOAT {$$=2;}
 | BOOL {$$=3;}
 ;
-
-declaration:  CONST type IDENTIFIER '=' inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
+ const_dec: CONST type IDENTIFIER '=' inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
 	    | CONST type IDENTIFIER '=' fnum {addConst($3,$2,fToCa($5),2);}
 	    | CONST type IDENTIFIER '=' bval   {addConst($3,$2,$5,3);/*cout << "constant defined " << $3<<endl;*/}
-            | type IDENTIFIER      		  {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/}
+	    ;
+var_dec: type IDENTIFIER      		  {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/};
+declaration:const_dec  
+            | var_dec
             ;
             
 /* this rule wasn't written in the file*/
 declarations:  
             | declarations declaration SEMICOLON
+	    | declarations err_stmt 
             ;
 
 /*  block of statements is a number of statements each folowed by a semicolon*/
 statements: 
           | statements statement SEMICOLON
+	  | statements err_stmt
           ;
           
 statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
@@ -166,6 +173,7 @@ bval : TRUE 	 {$$=(char*)"1";}
 assignment: IDENTIFIER '=' expr {checkAssignExp($1,$3);addQuad((char*)"=",$3->name,NULL,$1);}
           |IDENTIFIER'='bval
 	  {checkAssignBool($1,$3);char* v;if($3=="1")v=(char*)"true";else v=(char*)"false";addQuad((char*)"=",v,NULL,$1);}
+          
             ;
 
 /* to handle positive and negative numbers with out errors */
@@ -278,6 +286,7 @@ mexpr: mexpr PLUS term
 //end of grammar
 
 int main(int, char**) {
+	//yydebug=1;
 	//Loops =0, Switch cases=0
 	lCount=0;sCount=0;
 	//initialize types map
@@ -312,9 +321,9 @@ int main(int, char**) {
 void yyerror(const char *s) {
 	//cout << "oops, parse error in line "<<line<<"!  Message: " << s << endl;
 		
-	fprintf(stderr,"Error: %s at line %d\n", s,line);	
+	fprintf(stderr,"Syntax ERROR line: %d :: %s\n", line,s);	
 	//fprintf(stderr, "Parser does not expect '%s\n'",yytext);
-	exit(-1);
+	//exit(-1);
 }
 
 ////////// Quadriples /////////////////
@@ -391,11 +400,17 @@ err=true;
 msg(undeclared,line,id,NULL);
 return;
 }
+if(symbolTable[id]->type!=1){
+printf("Semantic ERROR line: %d :: %s must have integer type\n",line,id);
+return;
+}
+
 if(!isInit(id)){
 err=true;
 msg(uninit,line,id,NULL);
 return;
 }
+
 }
 else if(m==1){
 	if(!isDeclared(id)){
@@ -499,7 +514,7 @@ void addConst(char*id, int t1,char* val, int t2){
 
 if(isDeclared(id)){
 err=true;
-printf("Semantic ERROR line: %d :: Multiple declarations for Const %s",line,id);
+printf("Semantic ERROR line: %d :: Multiple declarations for %s\n",line,id);
 return;
 }
 symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
@@ -518,7 +533,7 @@ d->type=t1;
 d->cl=1;
 d->used=0;
 symbolTable[id]=d;
-printf("%d: %s Const %s %s\n",line,types[t1],id,d->val);
+//printf("%d: %s Const %s %s\n",line,types[t1],id,d->val);
 }
 
 /******************Variable declaration*******************/
@@ -527,7 +542,7 @@ void addVar(char*id, int t){
 if(isDeclared(id))
 {
 err=true;
-printf("Semantic ERROR line: %d :: Multiple declarations for variable %s \n",line,id);
+printf("Semantic ERROR line: %d :: Multiple declarations for %s \n",line,id);
 return;
 }
 
@@ -537,7 +552,7 @@ d->type=t;
 d->cl=0;
 d->used=0;
 symbolTable[id]=d;
-printf("%d: %s Var %s %s\n",line,types[t],id,d->val);
+//printf("%d: %s Var %s %s\n",line,types[t],id,d->val);
 }
 /********************Bool Assignment Statement Check***********/
 void checkAssignBool(char*id1,char*bolval){
@@ -563,7 +578,7 @@ return;
 
 d->val = (char*)malloc(sizeof(bolval));
 strncpy(d->val,bolval,sizeof(d->val));
-printf("%d: %s %s %s \n",line,types[3],id1,d->val);
+//printf("%d: %s %s %s \n",line,types[3],id1,d->val);
 }
 /********************Expression Assignment Statement Check***********/
 void checkAssignExp(char*id1,exptype*e){
@@ -615,7 +630,7 @@ return;
 d->val = (char*)malloc(sizeof(e->val));
 strncpy(d->val,e->val,sizeof(d->val));
 
-printf("%d: %s %s %s \n",line,types[d->type],id1,d->val);
+//printf("%d: %s %s %s \n",line,types[d->type],id1,d->val);
 }
 /*******************Create Expression *******************/
 num*createNum(int t,char* v){

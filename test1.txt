@@ -7,7 +7,6 @@ float f;
 bool x;
 bool y;
 bool z;
-bool w;
 const int x=5;
 float 77dd;
 fllt f2;
@@ -72,9 +71,9 @@ while(5){
 };
 
 
-do{
+while(i1<50){
 i2=i2+1;
-}while(i1<50);
+};
 
 
 

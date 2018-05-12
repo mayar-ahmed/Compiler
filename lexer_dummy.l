@@ -12,7 +12,7 @@ extern char *yytext;
 %}
 
 digit [0-9]
-letter [a-zA-Z0-9_]
+letter [a-zA-Z_]
 
 %% 
 and           {/*cout<<"AND"<<endl;*/ return  AND;}

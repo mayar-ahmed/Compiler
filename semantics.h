@@ -5,7 +5,6 @@
 #include<map>
 using namespace std;
 enum M {undeclared=1,uninit=2,assignMismatch=3,compareMismatch=4,numerical=5,uninitVar=6,unusedVar=7,brk=8,cont=9,unusedConst=10};
-//extern map<char*,symbolData> symbolTable;
 struct symbolData{
 char*val;
 int type,cl,used;
@@ -50,6 +49,7 @@ void checkContinue();
 void checkUnused();
 num*createNum(int,char*);
 void checkType(char*id,int t,int m);
+void printST();
 char* addQuad(char* opr,char* opd1,char* opd2,char* res);
 void printQuads();
 void push_l();

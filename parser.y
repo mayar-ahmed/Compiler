@@ -6,16 +6,15 @@
 #include<map>
 #include<list>
 #include<vector>
-
 using namespace std;
 
-// stuff from flex that bison needs to know about:
 extern "C" int yylex();
 extern "C" int yyparse();
 extern "C" FILE *yyin;
 extern int line;
 int lCount,sCount;
 void yyerror(const char *s);
+///////Symbol Table///////////////
 struct cmp_str
 {
 bool operator()(char const*a, char const *b ){
@@ -43,7 +42,7 @@ vector<int> con_labels;
 vector<char*> swID;
 %}
 %error-verbose
-//token types used  (kol elly elexer momken yraga3o)
+//token types used
 %union {
 	int ival;
 	float fval;
@@ -59,8 +58,6 @@ vector<char*> swID;
 %token PROGRAM
 %token CONST
 %token S
-%token INC
-%token DEC
 %token INT
 %token FLOAT
 %token BOOL
@@ -127,24 +124,28 @@ vector<char*> swID;
 
 program : PROGRAM  declarations S  statements  END   { cout<< "program skeleton defined"<<endl; }
         ;
-
+/* Error Statement definition*/
 err_stmt: error SEMICOLON {err=true;}
 	| error ')' {err=true;}
 	;
+/* Types definition*/
 type : INT {$$=1;}
 | FLOAT {$$=2;}
 | BOOL {$$=3;}
 ;
+/* Constant declaration statement definition*/
  const_dec: CONST type IDENTIFIER '=' inum {addConst($3,$2,iToCa($5),1);/*cout << "constant defined " << $3<<endl;*/}
 	    | CONST type IDENTIFIER '=' fnum {addConst($3,$2,fToCa($5),2);}
 	    | CONST type IDENTIFIER '=' bval   {addConst($3,$2,$5,3);/*cout << "constant defined " << $3<<endl;*/}
 	    ;
-var_dec: type IDENTIFIER      		  {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/};
+/* Variable declaration statement definition*/
+var_dec: type IDENTIFIER {addVar($2,$1); /*cout << "variable defined " << $2 <<endl;*/};
+
+/* Declaration statement definition*/
 declaration:const_dec  
             | var_dec
             ;
             
-/* this rule wasn't written in the file*/
 declarations:  
             | declarations declaration SEMICOLON
 	    | declarations err_stmt 
@@ -156,12 +157,12 @@ statements:
 	  | statements err_stmt
           ;
           
-statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
-        |if_stmt	{/*cout <<line<<": if statemet" <<endl;*/}
-        |while_stsmt 	{/*cout <<"while loop " <<endl;*/}
-        |do_while_stmt	{/*cout <<"do while loop" <<endl;*/}
-        |for_stmt 	{/*cout << "for loop" ;*/}
-        |switch_stmt    {/*cout <<"switch statemet" <<endl;*/}
+statement: assignment	
+        |if_stmt	
+        |while_stsmt 	
+        |do_while_stmt	
+        |for_stmt 	
+        |switch_stmt    
         |BREAK          {checkBreak();addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}
         |CONTINUE  	{checkContinue();addQuad((char*)"goto",iToCa(con_labels.back()),NULL,NULL);}
         ;
@@ -175,23 +176,16 @@ bval : TRUE 	 {$$=(char*)"1";}
 assignment: IDENTIFIER '=' expr {checkAssignExp($1,$3);addQuad((char*)"=",$3->name,NULL,$1);}
           |IDENTIFIER'='bval
 	  {checkAssignBool($1,$3);char* v;if($3=="1")v=(char*)"true";else v=(char*)"false";addQuad((char*)"=",v,NULL,$1);}
-          
             ;
 
 /* to handle positive and negative numbers with out errors */
-/*
-pnum: FNUM | INUM;
-nnum: MINUS FNUM | MINUS INUM; 
-number: pnum | nnum;
-*/
-/* to handle positive and negative numbers with out errors */
 /*to separate float from integer for semantic analysis*/
 fnum: FNUM {$$=$1;}
-| MINUS FNUM {$$=-1*$2;};
+     |MINUS FNUM {$$=-1*$2;};
 inum: INUM {$$=$1;}
-|  MINUS INUM{$$=-1*$2;};
-number: fnum {$$=createNum(2,fToCa($1));}
-| inum {$$=createNum(1,iToCa($1));};
+     |MINUS INUM{$$=-1*$2;};
+number: fnum {$$=createNum(2,fToCa($1));} 
+       |inum {$$=createNum(1,iToCa($1));};
     
 /* all kinds of expressions */
 expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);$$->name=addQuad((char*)"=",fToCa($1),NULL,NULL);}
@@ -216,23 +210,20 @@ expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);$$->name=addQuad((char*)"=",fT
     | NOT expr		{$$ = checkNot($2);$$->name=addQuad((char*)"not",$2->name,NULL,NULL);}
     | '(' expr ')'	{$$=$2;}
     ;
-/*
-if_stmt: IF LB expr RB THEN statements ENDIF 
-        | IF LB expr RB THEN statements ELSE statements ENDIF
-        ;
-  */      
+ /* If statement definition*/
 if_: IF '(' expr{checkCond($3);addQuad((char*)"false",iToCa(label),$3->name,NULL);labels.push_back(label);label++;} ')'THEN 		statements;
 if_else:ENDIF
 	|ELSE {addQuad((char*)"goto",iToCa(label),NULL,NULL);addQuad((char*)"l",iToCa(labels.back()),NULL,NULL); 			labels.pop_back();labels.push_back(label);label++;}statements ENDIF;
 if_stmt:if_ if_else {addQuad((char*)"l",iToCa(labels.back()),NULL,NULL);labels.pop_back();};        
 
+/* While definition*/
 while_stsmt: WHILE {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();label--;}
 		'(' expr {checkCond($4);addQuad((char*)"false",iToCa(label),$4->name,NULL);label--;con_labels.push_back(label);
 		push_l();label++;}')' '{'{lCount++;} statements '}'{lCount--;
 		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();con_labels.pop_back();
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();};
 
-
+/* Do While definition*/
 do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();con_labels.push_back(label);push_l();}
 		 statements '}'{lCount--;} WHILE '(' {addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
 		 expr{checkCond($10);addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),$10->name,NULL);
@@ -240,9 +231,7 @@ do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l(
 		con_labels.pop_back();}')';
 
 
-/*  switch case definition*/
-//pint : INUM | MINUS INUM;
-
+/* Switch Case definition*/
 s_stmt: cases default | cases;
 
 case: CASE inum COLON {
@@ -257,11 +246,7 @@ switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);swID.push_back(addQuad((cha
 		{sCount++;} s_stmt '}'{sCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
 		swID.pop_back();} ;
 
-
-///////////////////////////////////////////////////////////
-
-
-/* needs modification to make sure it's correct */
+/* For statement definition*/
 
 for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);addQuad((char*)"=",$6->name,NULL,$3);
 	addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();} COLON expr 
@@ -273,24 +258,6 @@ for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);
 	addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);
 	addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);
 	loop_labels.pop_back();loop_labels.pop_back();con_labels.pop_back();}; 
-
-        
-/* old definition of expression */
-/*factor : LB mexpr RB     
-        | number         
-        | IDENTIFIER     
-        ;
-
-term: term MUL factor    
-    | term DIV factor    
-    | factor             
-    ;
-    
-mexpr: mexpr PLUS term  
-    | mexpr MINUS term   
-    | term               
-    ;*/
-
 
 %% 
 //end of grammar
@@ -305,7 +272,7 @@ int main(int, char**) {
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("quadTest.txt", "r");
+	FILE *myfile = fopen("temp.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;
@@ -322,21 +289,38 @@ int main(int, char**) {
 	do {
 		yyparse();
 	} while (!feof(yyin));
+	// Print unused variables
 	checkUnused();
+	//Display symbol table
+	printST();
+	//Display quadruples
 	if(!err)
 		printQuads();
 	
 }
 
 void yyerror(const char *s) {
-	//cout << "oops, parse error in line "<<line<<"!  Message: " << s << endl;
-		
 	fprintf(stderr,"Syntax ERROR line: %d :: %s\n", line,s);	
-	//fprintf(stderr, "Parser does not expect '%s\n'",yytext);
-	//exit(-1);
+}
+//Display symbol table
+void printST(){
+map<char*,symbolData*> ::iterator it;
+printf("SYMBOL TABLE:\n");
+printf("=============\n");
+printf("IDENTIFIER\tTYPE\tUSED\tCLASS\n");
+char* clss;
+symbolData* data;
+for(it=symbolTable.begin();it!=symbolTable.end();it++){
+data = it->second;
+if(data->cl==1)
+clss = (char*)"Const";
+else
+clss = (char*)"Variable";
+printf("%s\t\t%s\t%d\t%s\n",it->first,types[data->type],data->used,clss);
 }
 
-////////// Quadriples /////////////////
+}
+////////// Quadruples /////////////////
 char* addQuad(char* opr,char* opd1,char* opd2,char* res)
 {
 	struct code q;
@@ -400,39 +384,46 @@ void push_l()
 }
 /** Functions used for semantic analysis **/
 
+/******************Type check*******************/
+//used in switch, for statements
 void checkType(char*id,int t,int m){
+//Mark used variable
 if(isDeclared(id))
-symbolTable[id]->used=1;
+	symbolTable[id]->used=1;
 //Switch case
 if(m==2){
-if(!isDeclared(id)){
-err=true;
-msg(undeclared,line,id,NULL);
-return;
-}
-if(symbolTable[id]->type!=1){
-printf("Semantic ERROR line: %d :: %s must have integer type\n",line,id);
-return;
-}
+	if(!isDeclared(id)){
+	err=true;
+	msg(undeclared,line,id,NULL);
+	return;
+	}
+	//Check if the variable is not integer
+	if(symbolTable[id]->type!=1){
+		printf("Semantic ERROR line: %d :: %s must have integer type\n",line,id);
+		return;
+	}
 
-if(!isInit(id)){
-err=true;
-msg(uninit,line,id,NULL);
-return;
+	if(!isInit(id)){
+	err=true;
+	msg(uninit,line,id,NULL);
+	return;
+	}
 }
-
-}
+//For statement: check identifier type
 else if(m==1){
 	if(!isDeclared(id)){
 	err=true;
 	return;
 	}
+	//loop counter is not integer or float
 	if(symbolTable[id]->type !=1 && symbolTable[id]->type !=2){
 	err=true;
 	printf("Semantic ERROR line: %d :: Loop counter must have int or float type",line);
 	}
 }
+//For statement: check step type with identifier type
 else{
+
 	if(!isDeclared(id)){
 	err=true;
 	return;
@@ -446,6 +437,7 @@ else{
 
 }
 }
+/******************Print WARNINGS for unused variables*******************/
 void checkUnused(){
 map<char*,symbolData*> ::iterator it;
 for(it=symbolTable.begin();it!=symbolTable.end();it++){
@@ -459,25 +451,25 @@ for(it=symbolTable.begin();it!=symbolTable.end();it++){
 }
 
 }
+/************Check if identifier is previously declared***********/
 bool isDeclared(char*id){
 map<char*,symbolData*>::iterator it = symbolTable.find(id);
 return it!=symbolTable.end();
 }
-//Convert integer to char*
+/******************Convert integer to (char*)*******************/
 char*iToCa(int i){
  char*str = (char*)malloc(sizeof(int));	
  sprintf(str, "%d", i);
 return str;
 }
-//Convert float to char*
+/******************Convert float to (char*)*******************/
 char*fToCa(float n){
 char *b = (char*)malloc(sizeof(float));
 int ret = snprintf(b, sizeof b, "%f", n);
 //cout<<"Converted Value: "<<b<<endl;
 return b;
 }
-//uninitVar=6,unusedVar=7
-
+/******************Print error messages*******************/
 void msg(int m, int l,char* t1,char* t2){
 if(m==1)
 	printf("Semantic ERROR line: %d :: Usage of undeclared variable %s \n",line,t1);	
@@ -501,17 +493,18 @@ else if(m==10)
 	printf("Semantic WARNING :: Constant %s is unused \n",t1);
 
 }
-
+/**********Check if identidier is initialized************/
 bool isInit(char*id){
 return symbolTable[id]->val!=NULL;
 }
-
+/**************Semantics for break statement*************/
 void checkBreak(){
 if(lCount == 0 && sCount==0){
 err=true;
 msg(brk,line,NULL,NULL);
 }
 }
+/**************Semantics for break statement*************/
 void checkContinue(){
 if(lCount == 0){
 err=true;
@@ -519,6 +512,7 @@ msg(cont,line,NULL,NULL);
 }
 }
 
+/************Semantics for Constant Declaration*********/
 // Constant declaration
 void addConst(char*id, int t1,char* val, int t2){
 
@@ -527,8 +521,9 @@ err=true;
 printf("Semantic ERROR line: %d :: Multiple declarations for %s\n",line,id);
 return;
 }
-symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
 
+symbolData* d = (symbolData*)malloc(sizeof(struct symbolData));
+//Type mismatch
 if(t1!=t2){
 err=true;
 msg(assignMismatch,line,types[t2],types[t1]);
@@ -546,7 +541,7 @@ symbolTable[id]=d;
 //printf("%d: %s Const %s %s\n",line,types[t1],id,d->val);
 }
 
-/******************Variable declaration*******************/
+/*********Semantics for Variable declaration************/
 
 void addVar(char*id, int t){
 if(isDeclared(id))
@@ -564,7 +559,7 @@ d->used=0;
 symbolTable[id]=d;
 //printf("%d: %s Var %s %s\n",line,types[t],id,d->val);
 }
-/********************Bool Assignment Statement Check***********/
+/**********Semantics for Bool Assignment Statement**********/
 void checkAssignBool(char*id1,char*bolval){
 if(!isDeclared(id1)){
 err=true;
@@ -599,7 +594,7 @@ if(!isDeclared(id1)){
 	msg(undeclared,line,id1,NULL);
 	return;
 }
-
+//If RHS is identifier
 if(e->id){
 	if(!isDeclared(e->name)){
 	err=true;	
@@ -642,7 +637,7 @@ strncpy(d->val,e->val,sizeof(d->val));
 
 //printf("%d: %s %s %s \n",line,types[d->type],id1,d->val);
 }
-/*******************Create Expression *******************/
+/*******************Create Number *********************/
 num*createNum(int t,char* v){
 num* n = (num*)malloc(sizeof(struct num));
 n->type=t;
@@ -654,7 +649,7 @@ return n;
 exptype*createExpr(int i, char* c, int id1, char*n){
 
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
-
+//if expression is an identifier 
 if(id1==1)
 {
 	if(!isDeclared(n))
@@ -996,7 +991,7 @@ cout<<line<<": Result: "<<res<<endl;
 t->name=NULL;
 t->id=0;
 }
-
+/**************** Check NOT Operation *********************/
 exptype*checkNot(exptype*e){
 exptype* t = (exptype*)malloc(sizeof(struct exptype));
 if(!isDeclared(e->name)){
@@ -1030,7 +1025,7 @@ t->id=0;
 return t;
 
 }
-
+/**************** Check Conditions *********************/
 void checkCond(exptype*e){
 if(e->id==1){
 if(!isDeclared(e->name)){
@@ -1049,6 +1044,7 @@ if(e->type!=0)
 	printf("Semantic ERROR line: %d :: Condition must have a bool value \n",line);
 }
 }
+/**************Apply Logical Operations *****************/
 bool logical(bool x1, char*op,bool x2){
 if(op == "&")
 return x1&&x2;
@@ -1058,7 +1054,7 @@ if(op=="!")
 return !x2;
 }
 
-
+/*********Check both expressions to be declared & initialized********/
 bool invalidExpressions(exptype*e1,exptype*e2){
 bool udec1 = false, udec2 = false, uin1 = false, uin2 = false;
 //Expression 1 is identifier
@@ -1093,6 +1089,7 @@ if(e2->id){
 
 return (udec1 || udec2 || uin1 || uin2);
 }
+/****************Apply integer Comparison*********************/
 bool compareInt(int x1,char*op, int x2){
 if(op == ">")
 return x1>x2;
@@ -1107,7 +1104,7 @@ return x1==x2;
 if(op=="!=")
 return x1!=x2;
 }
-
+/****************Apply float Comparison*********************/
 bool compareFloat(float x1, char*op, float x2){
 if(op == ">")
 return x1>x2;
@@ -1122,22 +1119,14 @@ return x1==x2;
 if(op=="!=")
 return x1!=x2;
 }
-
+/****************Apply Bool Comparison*********************/
 bool compareBool(bool x1, char*op, bool x2){
-if(op == ">")
-return x1>x2;
-if(op=="<")
-return x1<x2;
-if(op==">=")
-return x1>=x2;
-if(op=="<=")
-return x1<=x2;
 if(op=="==")
 return x1==x2;
 if(op=="!=")
 return x1!=x2;
 }
-
+/****************Allocate memory*********************/
 char*allocValue(int t){
 if (t==1)
 return (char*)malloc(sizeof(int));

@@ -30,8 +30,6 @@ break         { return BREAK;}
 continue      { return CONTINUE;}
 for           { return FOR;}
 endif         { return ENDIF;}
-inc           { return INC;}
-dec           { return DEC;}
 true          {/*cout<<"TRUE"<<endl;*/ yylval.bval=true; /*cout<<"Val: "<<yylval.bval<<endl;*/ return TRUE;}
 false         {/*cout<<"FALSE"<<endl;*/ yylval.bval=false; return FALSE; }
 

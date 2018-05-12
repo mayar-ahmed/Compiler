@@ -110,44 +110,43 @@ Grammar
 
    72 do_while_stmt: DO '{' $@6 statements '}' $@7 WHILE '(' $@8 expr $@9 ')'
 
-   73 pint: INUM
-   74     | MINUS INUM
+   73 s_stmt: cases default
+   74       | cases
 
-   75 s_stmt: cases default
-   76       | cases
+   75 $@10: %empty
 
-   77 case: CASE pint COLON statements
+   76 case: CASE inum COLON $@10 statements
 
-   78 cases: %empty
-   79      | cases case
+   77 cases: %empty
+   78      | cases case
 
-   80 default: DEFAULT COLON statements
+   79 default: DEFAULT COLON statements
 
-   81 $@10: %empty
+   80 $@11: %empty
 
-   82 $@11: %empty
+   81 $@12: %empty
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' '{' $@12 s_stmt '}'
 
-   84 $@12: %empty
+   83 $@13: %empty
 
-   85 $@13: %empty
+   84 $@14: %empty
 
-   86 $@14: %empty
+   85 $@15: %empty
 
-   87 $@15: %empty
+   86 $@16: %empty
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 57 59 67 72 83 88
-')' (41) 3 57 59 67 72 83 88
-'=' (61) 7 8 9 29 30 88
-'{' (123) 67 72 83 88
-'}' (125) 67 72 83 88
+'(' (40) 57 59 67 72 82 87
+')' (41) 3 57 59 67 72 82 87
+'=' (61) 7 8 9 29 30 87
+'{' (123) 67 72 82 87
+'}' (125) 67 72 82 87
 error (256) 2 3
 SEMICOLON (258) 2 14 17
 END (259) 1
@@ -167,13 +166,13 @@ IF (272) 59
 THEN (273) 59
 ELSE (274) 62
 ENDIF (275) 60 62
-SWITCH (276) 83
-CASE (277) 77
-DEFAULT (278) 80
+SWITCH (276) 82
+CASE (277) 76
+DEFAULT (278) 79
 BREAK (279) 25
 CONTINUE (280) 26
 PLUS (281) 40
-MINUS (282) 32 34 41 74
+MINUS (282) 32 34 41
 MUL (283) 42
 DIV (284) 43
 GTE (285) 45
@@ -182,14 +181,14 @@ GT (287) 44
 LT (288) 46
 EQ (289) 49 50 51
 NE (290) 48 52 53
-COLON (291) 77 80 88
+COLON (291) 76 79 87
 DO (292) 72
-FOR (293) 88
+FOR (293) 87
 FNUM (294) 31 32
-INUM (295) 33 34 73 74
+INUM (295) 33 34
 TRUE (296) 27 50 52
 FALSE (297) 28 51 53
-IDENTIFIER (298) 7 8 9 10 29 30 39 83 88
+IDENTIFIER (298) 7 8 9 10 29 30 39 82 87
 
 
 Nonterminals, with rules where they appear
@@ -211,7 +210,7 @@ declaration (55)
 declarations (56)
     on left: 13 14 15, on right: 1 14 15
 statements (57)
-    on left: 16 17 18, on right: 1 17 18 59 62 67 72 77 80 88
+    on left: 16 17 18, on right: 1 17 18 59 62 67 72 76 79 87
 statement (58)
     on left: 19 20 21 22 23 24 25 26, on right: 17
 bval (59)
@@ -221,13 +220,13 @@ assignment (60)
 fnum (61)
     on left: 31 32, on right: 8 35 37
 inum (62)
-    on left: 33 34, on right: 7 36 38
+    on left: 33 34, on right: 7 36 38 76
 number (63)
-    on left: 35 36, on right: 88
+    on left: 35 36, on right: 87
 expr (64)
     on left: 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54
     55 56 57, on right: 29 40 41 42 43 44 45 46 47 48 49 50 51 52 53
-    54 55 56 57 59 67 72 88
+    54 55 56 57 59 67 72 87
 if_ (65)
     on left: 59, on right: 63
 $@1 (66)
@@ -256,32 +255,32 @@ $@8 (77)
     on left: 70, on right: 72
 $@9 (78)
     on left: 71, on right: 72
-pint (79)
-    on left: 73 74, on right: 77
-s_stmt (80)
-    on left: 75 76, on right: 83
-case (81)
-    on left: 77, on right: 79
+s_stmt (79)
+    on left: 73 74, on right: 82
+case (80)
+    on left: 76, on right: 78
+$@10 (81)
+    on left: 75, on right: 76
 cases (82)
-    on left: 78 79, on right: 75 76 79
+    on left: 77 78, on right: 73 74 78
 default (83)
-    on left: 80, on right: 75
+    on left: 79, on right: 73
 switch_stmt (84)
-    on left: 83, on right: 24
-$@10 (85)
-    on left: 81, on right: 83
-$@11 (86)
-    on left: 82, on right: 83
+    on left: 82, on right: 24
+$@11 (85)
+    on left: 80, on right: 82
+$@12 (86)
+    on left: 81, on right: 82
 for_stmt (87)
-    on left: 88, on right: 23
-$@12 (88)
-    on left: 84, on right: 88
-$@13 (89)
-    on left: 85, on right: 88
-$@14 (90)
-    on left: 86, on right: 88
-$@15 (91)
-    on left: 87, on right: 88
+    on left: 87, on right: 23
+$@13 (88)
+    on left: 83, on right: 87
+$@14 (89)
+    on left: 84, on right: 87
+$@15 (90)
+    on left: 85, on right: 87
+$@16 (91)
+    on left: 86, on right: 87
 
 
 State 0
@@ -522,7 +521,7 @@ State 25
 
 State 26
 
-   83 switch_stmt: SWITCH . '(' IDENTIFIER $@10 ')' '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH . '(' IDENTIFIER $@11 ')' '{' $@12 s_stmt '}'
 
     '('  shift, and go to state 44
 
@@ -550,7 +549,7 @@ State 29
 
 State 30
 
-   88 for_stmt: FOR . '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR . '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     '('  shift, and go to state 46
 
@@ -671,7 +670,7 @@ State 43
 
 State 44
 
-   83 switch_stmt: SWITCH '(' . IDENTIFIER $@10 ')' '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' . IDENTIFIER $@11 ')' '{' $@12 s_stmt '}'
 
     IDENTIFIER  shift, and go to state 67
 
@@ -687,7 +686,7 @@ State 45
 
 State 46
 
-   88 for_stmt: FOR '(' . IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' . IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     IDENTIFIER  shift, and go to state 69
 
@@ -909,11 +908,11 @@ State 66
 
 State 67
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER . $@10 ')' '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER . $@11 ')' '{' $@12 s_stmt '}'
 
-    $default  reduce using rule 81 ($@10)
+    $default  reduce using rule 80 ($@11)
 
-    $@10  go to state 91
+    $@11  go to state 91
 
 
 State 68
@@ -927,11 +926,11 @@ State 68
 
 State 69
 
-   88 for_stmt: FOR '(' IDENTIFIER . $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER . $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
-    $default  reduce using rule 84 ($@12)
+    $default  reduce using rule 83 ($@13)
 
-    $@12  go to state 93
+    $@13  go to state 93
 
 
 State 70
@@ -1316,7 +1315,7 @@ State 90
 
 State 91
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 . ')' '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 . ')' '{' $@12 s_stmt '}'
 
     ')'  shift, and go to state 114
 
@@ -1351,7 +1350,7 @@ State 92
 
 State 93
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 . '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 . '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     '='  shift, and go to state 116
 
@@ -1778,7 +1777,7 @@ State 113
 
 State 114
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' . '{' $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' . '{' $@12 s_stmt '}'
 
     '{'  shift, and go to state 120
 
@@ -1794,7 +1793,7 @@ State 115
 
 State 116
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' . expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' . expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     NOT         shift, and go to state 61
     MINUS       shift, and go to state 52
@@ -1833,11 +1832,11 @@ State 119
 
 State 120
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' '{' . $@11 s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' '{' . $@12 s_stmt '}'
 
-    $default  reduce using rule 82 ($@11)
+    $default  reduce using rule 81 ($@12)
 
-    $@11  go to state 125
+    $@12  go to state 125
 
 
 State 121
@@ -1865,7 +1864,7 @@ State 122
    53     | expr . NE FALSE
    54     | expr . AND expr
    55     | expr . OR expr
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr . $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr . $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     AND    shift, and go to state 78
     OR     shift, and go to state 79
@@ -1880,9 +1879,9 @@ State 122
     EQ     shift, and go to state 88
     NE     shift, and go to state 89
 
-    $default  reduce using rule 85 ($@13)
+    $default  reduce using rule 84 ($@14)
 
-    $@13  go to state 127
+    $@14  go to state 127
 
 
 State 123
@@ -1926,9 +1925,9 @@ State 124
 
 State 125
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' '{' $@11 . s_stmt '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' '{' $@12 . s_stmt '}'
 
-    $default  reduce using rule 78 (cases)
+    $default  reduce using rule 77 (cases)
 
     s_stmt  go to state 129
     cases   go to state 130
@@ -1943,7 +1942,7 @@ State 126
 
 State 127
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 . COLON expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 . COLON expr COLON number $@15 ')' '{' $@16 statements '}'
 
     COLON  shift, and go to state 132
 
@@ -1959,21 +1958,21 @@ State 128
 
 State 129
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' '{' $@11 s_stmt . '}'
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' '{' $@12 s_stmt . '}'
 
     '}'  shift, and go to state 134
 
 
 State 130
 
-   75 s_stmt: cases . default
-   76       | cases .
-   79 cases: cases . case
+   73 s_stmt: cases . default
+   74       | cases .
+   78 cases: cases . case
 
     CASE     shift, and go to state 135
     DEFAULT  shift, and go to state 136
 
-    $default  reduce using rule 76 (s_stmt)
+    $default  reduce using rule 74 (s_stmt)
 
     case     go to state 137
     default  go to state 138
@@ -1990,7 +1989,7 @@ State 131
 
 State 132
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON . expr COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON . expr COLON number $@15 ')' '{' $@16 statements '}'
 
     NOT         shift, and go to state 61
     MINUS       shift, and go to state 52
@@ -2034,40 +2033,40 @@ State 133
 
 State 134
 
-   83 switch_stmt: SWITCH '(' IDENTIFIER $@10 ')' '{' $@11 s_stmt '}' .
+   82 switch_stmt: SWITCH '(' IDENTIFIER $@11 ')' '{' $@12 s_stmt '}' .
 
-    $default  reduce using rule 83 (switch_stmt)
+    $default  reduce using rule 82 (switch_stmt)
 
 
 State 135
 
-   77 case: CASE . pint COLON statements
+   76 case: CASE . inum COLON $@10 statements
 
     MINUS  shift, and go to state 142
-    INUM   shift, and go to state 143
+    INUM   shift, and go to state 54
 
-    pint  go to state 144
+    inum  go to state 143
 
 
 State 136
 
-   80 default: DEFAULT . COLON statements
+   79 default: DEFAULT . COLON statements
 
-    COLON  shift, and go to state 145
+    COLON  shift, and go to state 144
 
 
 State 137
 
-   79 cases: cases case .
+   78 cases: cases case .
 
-    $default  reduce using rule 79 (cases)
+    $default  reduce using rule 78 (cases)
 
 
 State 138
 
-   75 s_stmt: cases default .
+   73 s_stmt: cases default .
 
-    $default  reduce using rule 75 (s_stmt)
+    $default  reduce using rule 73 (s_stmt)
 
 
 State 139
@@ -2083,7 +2082,7 @@ State 139
 
     fnum  go to state 64
     inum  go to state 65
-    expr  go to state 146
+    expr  go to state 145
 
 
 State 140
@@ -2104,7 +2103,7 @@ State 140
    53     | expr . NE FALSE
    54     | expr . AND expr
    55     | expr . OR expr
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr . COLON number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr . COLON number $@15 ')' '{' $@16 statements '}'
 
     AND    shift, and go to state 78
     OR     shift, and go to state 79
@@ -2118,7 +2117,7 @@ State 140
     LT     shift, and go to state 87
     EQ     shift, and go to state 88
     NE     shift, and go to state 89
-    COLON  shift, and go to state 147
+    COLON  shift, and go to state 146
 
 
 State 141
@@ -2130,35 +2129,28 @@ State 141
 
 State 142
 
-   74 pint: MINUS . INUM
+   34 inum: MINUS . INUM
 
-    INUM  shift, and go to state 148
+    INUM  shift, and go to state 74
 
 
 State 143
 
-   73 pint: INUM .
+   76 case: CASE inum . COLON $@10 statements
 
-    $default  reduce using rule 73 (pint)
+    COLON  shift, and go to state 147
 
 
 State 144
 
-   77 case: CASE pint . COLON statements
-
-    COLON  shift, and go to state 149
-
-
-State 145
-
-   80 default: DEFAULT COLON . statements
+   79 default: DEFAULT COLON . statements
 
     $default  reduce using rule 16 (statements)
 
-    statements  go to state 150
+    statements  go to state 148
 
 
-State 146
+State 145
 
    40 expr: expr . PLUS expr
    41     | expr . MINUS expr
@@ -2193,43 +2185,36 @@ State 146
 
     $default  reduce using rule 71 ($@9)
 
-    $@9  go to state 151
+    $@9  go to state 149
 
 
-State 147
+State 146
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON . number $@14 ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON . number $@15 ')' '{' $@16 statements '}'
 
     MINUS  shift, and go to state 52
     FNUM   shift, and go to state 53
     INUM   shift, and go to state 54
 
-    fnum    go to state 152
-    inum    go to state 153
-    number  go to state 154
+    fnum    go to state 150
+    inum    go to state 151
+    number  go to state 152
+
+
+State 147
+
+   76 case: CASE inum COLON . $@10 statements
+
+    $default  reduce using rule 75 ($@10)
+
+    $@10  go to state 153
 
 
 State 148
 
-   74 pint: MINUS INUM .
-
-    $default  reduce using rule 74 (pint)
-
-
-State 149
-
-   77 case: CASE pint COLON . statements
-
-    $default  reduce using rule 16 (statements)
-
-    statements  go to state 155
-
-
-State 150
-
    17 statements: statements . statement SEMICOLON
    18           | statements . err_stmt
-   80 default: DEFAULT COLON statements .
+   79 default: DEFAULT COLON statements .
 
     error       shift, and go to state 5
     WHILE       shift, and go to state 24
@@ -2241,7 +2226,7 @@ State 150
     FOR         shift, and go to state 30
     IDENTIFIER  shift, and go to state 31
 
-    '}'  reduce using rule 80 (default)
+    '}'  reduce using rule 79 (default)
 
     err_stmt       go to state 32
     statement      go to state 33
@@ -2254,111 +2239,64 @@ State 150
     for_stmt       go to state 40
 
 
-State 151
+State 149
 
    72 do_while_stmt: DO '{' $@6 statements '}' $@7 WHILE '(' $@8 expr $@9 . ')'
 
-    ')'  shift, and go to state 156
+    ')'  shift, and go to state 154
 
 
-State 152
+State 150
 
    35 number: fnum .
 
     $default  reduce using rule 35 (number)
 
 
-State 153
+State 151
 
    36 number: inum .
 
     $default  reduce using rule 36 (number)
 
 
+State 152
+
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number . $@15 ')' '{' $@16 statements '}'
+
+    $default  reduce using rule 85 ($@15)
+
+    $@15  go to state 155
+
+
+State 153
+
+   76 case: CASE inum COLON $@10 . statements
+
+    $default  reduce using rule 16 (statements)
+
+    statements  go to state 156
+
+
 State 154
-
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number . $@14 ')' '{' $@15 statements '}'
-
-    $default  reduce using rule 86 ($@14)
-
-    $@14  go to state 157
-
-
-State 155
-
-   17 statements: statements . statement SEMICOLON
-   18           | statements . err_stmt
-   77 case: CASE pint COLON statements .
-
-    error       shift, and go to state 5
-    WHILE       shift, and go to state 24
-    IF          shift, and go to state 25
-    SWITCH      shift, and go to state 26
-    BREAK       shift, and go to state 27
-    CONTINUE    shift, and go to state 28
-    DO          shift, and go to state 29
-    FOR         shift, and go to state 30
-    IDENTIFIER  shift, and go to state 31
-
-    CASE     reduce using rule 77 (case)
-    DEFAULT  reduce using rule 77 (case)
-    '}'      reduce using rule 77 (case)
-
-    err_stmt       go to state 32
-    statement      go to state 33
-    assignment     go to state 34
-    if_            go to state 35
-    if_stmt        go to state 36
-    while_stsmt    go to state 37
-    do_while_stmt  go to state 38
-    switch_stmt    go to state 39
-    for_stmt       go to state 40
-
-
-State 156
 
    72 do_while_stmt: DO '{' $@6 statements '}' $@7 WHILE '(' $@8 expr $@9 ')' .
 
     $default  reduce using rule 72 (do_while_stmt)
 
 
-State 157
+State 155
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 . ')' '{' $@15 statements '}'
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 . ')' '{' $@16 statements '}'
 
-    ')'  shift, and go to state 158
-
-
-State 158
-
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' . '{' $@15 statements '}'
-
-    '{'  shift, and go to state 159
+    ')'  shift, and go to state 157
 
 
-State 159
-
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' . $@15 statements '}'
-
-    $default  reduce using rule 87 ($@15)
-
-    $@15  go to state 160
-
-
-State 160
-
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 . statements '}'
-
-    $default  reduce using rule 16 (statements)
-
-    statements  go to state 161
-
-
-State 161
+State 156
 
    17 statements: statements . statement SEMICOLON
    18           | statements . err_stmt
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements . '}'
+   76 case: CASE inum COLON $@10 statements .
 
     error       shift, and go to state 5
     WHILE       shift, and go to state 24
@@ -2366,7 +2304,63 @@ State 161
     SWITCH      shift, and go to state 26
     BREAK       shift, and go to state 27
     CONTINUE    shift, and go to state 28
-    '}'         shift, and go to state 162
+    DO          shift, and go to state 29
+    FOR         shift, and go to state 30
+    IDENTIFIER  shift, and go to state 31
+
+    CASE     reduce using rule 76 (case)
+    DEFAULT  reduce using rule 76 (case)
+    '}'      reduce using rule 76 (case)
+
+    err_stmt       go to state 32
+    statement      go to state 33
+    assignment     go to state 34
+    if_            go to state 35
+    if_stmt        go to state 36
+    while_stsmt    go to state 37
+    do_while_stmt  go to state 38
+    switch_stmt    go to state 39
+    for_stmt       go to state 40
+
+
+State 157
+
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' . '{' $@16 statements '}'
+
+    '{'  shift, and go to state 158
+
+
+State 158
+
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' . $@16 statements '}'
+
+    $default  reduce using rule 86 ($@16)
+
+    $@16  go to state 159
+
+
+State 159
+
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 . statements '}'
+
+    $default  reduce using rule 16 (statements)
+
+    statements  go to state 160
+
+
+State 160
+
+   17 statements: statements . statement SEMICOLON
+   18           | statements . err_stmt
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements . '}'
+
+    error       shift, and go to state 5
+    WHILE       shift, and go to state 24
+    IF          shift, and go to state 25
+    SWITCH      shift, and go to state 26
+    BREAK       shift, and go to state 27
+    CONTINUE    shift, and go to state 28
+    '}'         shift, and go to state 161
     DO          shift, and go to state 29
     FOR         shift, and go to state 30
     IDENTIFIER  shift, and go to state 31
@@ -2382,8 +2376,8 @@ State 161
     for_stmt       go to state 40
 
 
-State 162
+State 161
 
-   88 for_stmt: FOR '(' IDENTIFIER $@12 '=' expr $@13 COLON expr COLON number $@14 ')' '{' $@15 statements '}' .
+   87 for_stmt: FOR '(' IDENTIFIER $@13 '=' expr $@14 COLON expr COLON number $@15 ')' '{' $@16 statements '}' .
 
-    $default  reduce using rule 88 (for_stmt)
+    $default  reduce using rule 87 (for_stmt)

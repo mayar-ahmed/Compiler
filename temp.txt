@@ -9,6 +9,7 @@ bool y;
 bool z;
 bool w;
 const int x=5;
+const float pi=3.14;
 float 77dd;
 fllt f2;
 bool i1;

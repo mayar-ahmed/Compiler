@@ -29,7 +29,7 @@ switch(i2)
 		i=i2+99;
 		break;
 	case 33:
-		break;
+		continue;
 	default:
 		x=false;
 };

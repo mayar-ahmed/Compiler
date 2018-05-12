@@ -1,0 +1,48 @@
+t0 = 5
+i = t0
+t1 = 10
+i2 = t1
+x = true
+t2 = i2
+t3 = 4
+t4 = t2 == t3
+if not t4 goto L1
+t5 = 4
+e = t5
+L2:
+t6 = x == false
+if not t6 goto L3
+t7 = x == true
+if not t7 goto L5
+i = i2
+t8 = 33
+t9 = t8 + i
+e = t9
+goto L6
+L5:
+x = true
+goto L3
+L6:
+L4:
+t10 = 4
+t11 = e + t10
+e = t11
+goto L2
+L3:
+goto L0
+L1:
+t12 = 111
+t13 = t2 == t12
+if not t13 goto L7
+t14 = 99
+t15 = i2 + t14
+i = t15
+goto L0
+L7:
+t16 = 33
+t17 = t2 == t16
+if not t17 goto L8
+goto L0
+L8:
+x = false
+L0:

@@ -39,6 +39,8 @@ int label=0;
 bool err=false;
 vector<int> labels;
 vector<int> loop_labels;
+vector<int> con_labels;
+vector<char*> swID;
 %}
 %error-verbose
 //token types used  (kol elly elexer momken yraga3o)
@@ -153,8 +155,8 @@ statement: assignment	{/*cout <<line<<": assignemt statemet" <<endl;*/}
         |do_while_stmt	{/*cout <<"do while loop" <<endl;*/}
         |for_stmt 	{/*cout << "for loop" ;*/}
         |switch_stmt    {/*cout <<"switch statemet" <<endl;*/}
-        |BREAK          {checkBreak();/*addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);*/}
-        |CONTINUE  	{checkContinue();addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);}
+        |BREAK          {checkBreak();addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}
+        |CONTINUE  	{checkContinue();addQuad((char*)"goto",iToCa(con_labels.back()),NULL,NULL);}
         ;
         
 
@@ -217,28 +219,35 @@ if_else:ENDIF
 if_stmt:if_ if_else {addQuad((char*)"l",iToCa(labels.back()),NULL,NULL);labels.pop_back();};        
 
 while_stsmt: WHILE {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();label--;}
-		'(' expr {checkCond($4);addQuad((char*)"false",iToCa(label),$4->name,NULL);label--;push_l();label++;}
-		 ')' '{'{lCount++;} statements '}'{lCount--;
-		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
+		'(' expr {checkCond($4);addQuad((char*)"false",iToCa(label),$4->name,NULL);label--;con_labels.push_back(label);
+		push_l();label++;}')' '{'{lCount++;} statements '}'{lCount--;
+		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();con_labels.pop_back();
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();};
 
 
-do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();push_l();}
+do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();con_labels.push_back(label);push_l();}
 		 statements '}'{lCount--;} WHILE '(' {addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
 		 expr{checkCond($10);addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),$10->name,NULL);
-		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();}')';
+		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();
+		con_labels.pop_back();}')';
 
 
 /*  switch case definition*/
-pint : INUM | MINUS INUM;
+//pint : INUM | MINUS INUM;
 
 s_stmt: cases default | cases;
 
-case: CASE pint COLON statements; 
+case: CASE inum COLON {
+	addQuad((char*)"false",iToCa(label),addQuad((char*)"==",swID.back(),addQuad((char*)"=",iToCa($2),NULL,NULL),NULL),NULL);
+	push_l();}
+	statements
+	{addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}; 
 cases:  | cases case;
 default: DEFAULT COLON statements ;
 
-switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);} ')'  '{'{sCount++;} s_stmt '}'{sCount--;} ;
+switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);swID.push_back(addQuad((char*)"=",$3,NULL,NULL));push_l();} ')'  '{'
+		{sCount++;} s_stmt '}'{sCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
+		swID.pop_back();} ;
 
 
 ///////////////////////////////////////////////////////////
@@ -248,13 +257,14 @@ switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);} ')'  '{'{sCount++;} s_stm
 
 for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);addQuad((char*)"=",$6->name,NULL,$3);
 	addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();} COLON expr 
-	COLON number{checkType($3,$11->type,3);addQuad((char*)"false",iToCa(label),$9->name,NULL);push_l();push_l();}
+	COLON number{checkType($3,$11->type,3);addQuad((char*)"false",iToCa(label),$9->name,NULL);push_l();
+	con_labels.push_back(label);push_l();}
 	')' '{'{lCount++;} statements '}'
 	{lCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
 	addQuad((char*)"=",addQuad((char*)"+",$3,addQuad((char*)"=",$11->val,NULL,NULL),NULL),NULL,$3);
 	addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);
 	addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);
-	loop_labels.pop_back();loop_labels.pop_back();}; 
+	loop_labels.pop_back();loop_labels.pop_back();con_labels.pop_back();}; 
 
         
 /* old definition of expression */
@@ -286,7 +296,7 @@ int main(int, char**) {
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("temp.txt", "r");
+	FILE *myfile = fopen("quadTest.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;

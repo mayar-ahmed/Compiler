@@ -212,14 +212,14 @@ expr: fnum 		{$$ = createExpr(2,fToCa($1),0,NULL);$$->name=addQuad((char*)"=",fT
     | '(' expr ')'	{$$=$2;}
     ;
  /* If statement definition*/
-if_: IF '(' expr{checkCond($3);addQuad((char*)"false",iToCa(label),$3->name,NULL);labels.push_back(label);label++;} ')'THEN 		statements;
+if_: IF '(' expr{checkCond($3);addQuad((char*)"if not",iToCa(label),$3->name,NULL);labels.push_back(label);label++;} ')'THEN 		statements;
 if_else:ENDIF
 	|ELSE {addQuad((char*)"goto",iToCa(label),NULL,NULL);addQuad((char*)"l",iToCa(labels.back()),NULL,NULL); 			labels.pop_back();labels.push_back(label);label++;}statements ENDIF;
 if_stmt:if_ if_else {addQuad((char*)"l",iToCa(labels.back()),NULL,NULL);labels.pop_back();};        
 
 /* While definition*/
 while_stsmt: WHILE {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();label--;}
-		'(' expr {checkCond($4);addQuad((char*)"false",iToCa(label),$4->name,NULL);label--;con_labels.push_back(label);
+		'(' expr {checkCond($4);addQuad((char*)"if not",iToCa(label),$4->name,NULL);label--;con_labels.push_back(label);
 		push_l();label++;}')' '{'{lCount++;} statements '}'{lCount--;
 		addQuad((char*)"goto",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();con_labels.pop_back();
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();};
@@ -227,7 +227,7 @@ while_stsmt: WHILE {addQuad((char*)"l",iToCa(label),NULL,NULL);label++;push_l();
 /* Do While definition*/
 do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();push_l();con_labels.push_back(label);push_l();}
 		 statements '}'{lCount--;} WHILE '(' {addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}
-		 expr{checkCond($10);addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),$10->name,NULL);
+		 expr{checkCond($10);addQuad((char*)"if",iToCa(loop_labels[loop_labels.size()-2]),$10->name,NULL);
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();
 		con_labels.pop_back();}')';
 
@@ -236,7 +236,7 @@ do_while_stmt:DO '{'{lCount++;addQuad((char*)"l",iToCa(label),NULL,NULL);push_l(
 s_stmt: cases default | cases;
 
 case: CASE inum COLON {
-	addQuad((char*)"false",iToCa(label),addQuad((char*)"==",swID.back(),addQuad((char*)"=",iToCa($2),NULL,NULL),NULL),NULL);
+	addQuad((char*)"if not",iToCa(label),addQuad((char*)"==",swID.back(),addQuad((char*)"=",iToCa($2),NULL,NULL),NULL),NULL);
 	push_l();}
 	statements
 	{addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}; 
@@ -251,7 +251,7 @@ switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);swID.push_back(addQuad((cha
 
 for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);addQuad((char*)"=",$6->name,NULL,$3);
 	addQuad((char*)"l",iToCa(label),NULL,NULL);push_l();} COLON expr 
-	COLON number{checkType($3,$11->type,3);addQuad((char*)"false",iToCa(label),$9->name,NULL);push_l();
+	COLON number{checkType($3,$11->type,3);addQuad((char*)"if not",iToCa(label),$9->name,NULL);push_l();
 	con_labels.push_back(label);push_l();}
 	')' '{'{lCount++;} statements '}'
 	{lCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
@@ -328,7 +328,7 @@ char* addQuad(char* opr,char* opd1,char* opd2,char* res)
 	q.opr=opr;
 	q.opd1=opd1;
 	q.opd2=opd2;
-	if(res==NULL && opr!=(char*)"false" && opr!=(char*)"true" && opr!=(char*)"l" && opr!=(char*)"goto")
+	if(res==NULL && opr!=(char*)"if not" && opr!=(char*)"if" && opr!=(char*)"l" && opr!=(char*)"goto")
 	{
 		char* t=(char*)"t";
 		char* tmp = (char *) malloc(1 + strlen(t)+ strlen(iToCa(tmp_count)) );
@@ -347,24 +347,12 @@ void printQuads()
 	while(!quads.empty())
 	{
 		struct code q=quads.front();
-		if(q.opr==(char*)"false")
+		if(q.opr==(char*)"if not")
 		{
 			fprintf(file,"if not %s goto L%s\n",q.opd2,q.opd1);
 		}
-		else if(q.opr==(char*)"true")
+		else if(q.opr==(char*)"if")
 		{
-			if(jmp==(char*)"JL")
-				jmp=(char*)"JGE";
-			if(jmp==(char*)"JG")
-				jmp=(char*)"JLE";
-			if(jmp==(char*)"JE")
-				jmp=(char*)"JNE";
-			if(jmp==(char*)"JNE")
-				jmp=(char*)"JE";
-			if(jmp==(char*)"JLE")
-				jmp=(char*)"JG";
-			if(jmp==(char*)"JGE")
-				jmp=(char*)"JL";
 			fprintf(file,"if %s goto L%s\n",q.opd2,q.opd1);
 		}
 		else if(q.opr==(char*)"l")
@@ -377,11 +365,11 @@ void printQuads()
 		}
 		else if(q.opr==(char*)"=")
 		{
-			fprintf(file, "MOV %s   %s\n",q.opd1,q.res);
+			fprintf(file, "MOV %s    %s\n",q.opd1,q.res);
 		}
 		else if(q.opr==(char*)"not")
 		{
-			fprintf(file,"Not %s   %s\n",q.opd1,q.res);
+			fprintf(file,"Not %s    %s\n",q.opd1,q.res);
 		}
 		else
 		{

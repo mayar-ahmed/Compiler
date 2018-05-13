@@ -1699,7 +1699,7 @@ yyreduce:
 
   case 59:
 #line 215 "parser.y" /* yacc.c:1646  */
-    {checkCond((yyvsp[0].eval));addQuad((char*)"false",iToCa(label),(yyvsp[0].eval)->name,NULL);labels.push_back(label);label++;}
+    {checkCond((yyvsp[0].eval));addQuad((char*)"if not",iToCa(label),(yyvsp[0].eval)->name,NULL);labels.push_back(label);label++;}
 #line 1704 "parser.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1723,7 +1723,7 @@ yyreduce:
 
   case 66:
 #line 222 "parser.y" /* yacc.c:1646  */
-    {checkCond((yyvsp[0].eval));addQuad((char*)"false",iToCa(label),(yyvsp[0].eval)->name,NULL);label--;con_labels.push_back(label);
+    {checkCond((yyvsp[0].eval));addQuad((char*)"if not",iToCa(label),(yyvsp[0].eval)->name,NULL);label--;con_labels.push_back(label);
 		push_l();label++;}
 #line 1729 "parser.tab.c" /* yacc.c:1646  */
     break;
@@ -1762,7 +1762,7 @@ yyreduce:
 
   case 72:
 #line 230 "parser.y" /* yacc.c:1646  */
-    {checkCond((yyvsp[0].eval));addQuad((char*)"true",iToCa(loop_labels[loop_labels.size()-2]),(yyvsp[0].eval)->name,NULL);
+    {checkCond((yyvsp[0].eval));addQuad((char*)"if",iToCa(loop_labels[loop_labels.size()-2]),(yyvsp[0].eval)->name,NULL);
 		addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();loop_labels.pop_back();
 		con_labels.pop_back();}
 #line 1769 "parser.tab.c" /* yacc.c:1646  */
@@ -1771,7 +1771,7 @@ yyreduce:
   case 76:
 #line 238 "parser.y" /* yacc.c:1646  */
     {
-	addQuad((char*)"false",iToCa(label),addQuad((char*)"==",swID.back(),addQuad((char*)"=",iToCa((yyvsp[-1].ival)),NULL,NULL),NULL),NULL);
+	addQuad((char*)"if not",iToCa(label),addQuad((char*)"==",swID.back(),addQuad((char*)"=",iToCa((yyvsp[-1].ival)),NULL,NULL),NULL),NULL);
 	push_l();}
 #line 1777 "parser.tab.c" /* yacc.c:1646  */
     break;
@@ -1828,7 +1828,7 @@ yyreduce:
 
   case 87:
 #line 254 "parser.y" /* yacc.c:1646  */
-    {checkType((yyvsp[-8].sval),(yyvsp[0].nval)->type,3);addQuad((char*)"false",iToCa(label),(yyvsp[-2].eval)->name,NULL);push_l();
+    {checkType((yyvsp[-8].sval),(yyvsp[0].nval)->type,3);addQuad((char*)"if not",iToCa(label),(yyvsp[-2].eval)->name,NULL);push_l();
 	con_labels.push_back(label);push_l();}
 #line 1834 "parser.tab.c" /* yacc.c:1646  */
     break;
@@ -2147,7 +2147,7 @@ char* addQuad(char* opr,char* opd1,char* opd2,char* res)
 	q.opr=opr;
 	q.opd1=opd1;
 	q.opd2=opd2;
-	if(res==NULL && opr!=(char*)"false" && opr!=(char*)"true" && opr!=(char*)"l" && opr!=(char*)"goto")
+	if(res==NULL && opr!=(char*)"if not" && opr!=(char*)"if" && opr!=(char*)"l" && opr!=(char*)"goto")
 	{
 		char* t=(char*)"t";
 		char* tmp = (char *) malloc(1 + strlen(t)+ strlen(iToCa(tmp_count)) );
@@ -2166,24 +2166,12 @@ void printQuads()
 	while(!quads.empty())
 	{
 		struct code q=quads.front();
-		if(q.opr==(char*)"false")
+		if(q.opr==(char*)"if not")
 		{
 			fprintf(file,"if not %s goto L%s\n",q.opd2,q.opd1);
 		}
-		else if(q.opr==(char*)"true")
+		else if(q.opr==(char*)"if")
 		{
-			if(jmp==(char*)"JL")
-				jmp=(char*)"JGE";
-			if(jmp==(char*)"JG")
-				jmp=(char*)"JLE";
-			if(jmp==(char*)"JE")
-				jmp=(char*)"JNE";
-			if(jmp==(char*)"JNE")
-				jmp=(char*)"JE";
-			if(jmp==(char*)"JLE")
-				jmp=(char*)"JG";
-			if(jmp==(char*)"JGE")
-				jmp=(char*)"JL";
 			fprintf(file,"if %s goto L%s\n",q.opd2,q.opd1);
 		}
 		else if(q.opr==(char*)"l")

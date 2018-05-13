@@ -265,7 +265,6 @@ for_stmt: FOR '(' IDENTIFIER{checkType($3,1,1);} '=' expr{checkAssignExp($3,$6);
 
 int main(int, char**) {
 	//yydebug=1;
-	//Loops =0, Switch cases=0
 	lCount=0;sCount=0;
 	//initialize types map
 	types[0]= (char*)"unknown";
@@ -273,7 +272,7 @@ int main(int, char**) {
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("quadTest.txt", "r");
+	FILE *myfile = fopen("temp.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;

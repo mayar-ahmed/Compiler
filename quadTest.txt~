@@ -1,36 +1,41 @@
 program	
 int i;
-int i2;
-int e;
-float f;
-bool un;
-bool x;
+int j;
+int n;
+int f1;
+int f2;
+bool found;
+
 
 begin
-i=5;
-i2=10;
-x=true;
 
-switch(i2)
+n=100;
+found=false;
+while(found!=true)
 {
-	case 4:
-		for(e=4:x==false:4)
+	for(i=1:i<100:1)
+	{
+		for(j=i+1:j<100:1)
 		{
-			if(x==true)then
-				i=i2;
-				e=33+i;
-			else
-				x=true;
+			if(i*j==n)then
+				found=true;
 				break;
+			else
+				if(i*j<n)then
+					continue;
+				endif;
+				if(i*j>n)then
+					break;
+				endif;
 			endif;
 		};
-		break;
-	case 111:
-		i=i2+99;
-		break;
-	case 33:
-		continue;
-	default:
-		x=false;
+		if(found==true)then
+			break;		
+		endif;
+	};
+	f1=i;
+	f2=j;
 };
+
+n=f1*f2;
 end

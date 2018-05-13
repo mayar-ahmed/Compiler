@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 # define YY_YY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -50,48 +50,46 @@ extern int yydebug;
     PROGRAM = 260,
     CONST = 261,
     S = 262,
-    INC = 263,
-    DEC = 264,
-    INT = 265,
-    FLOAT = 266,
-    BOOL = 267,
-    AND = 268,
-    OR = 269,
-    NOT = 270,
-    WHILE = 271,
-    IF = 272,
-    THEN = 273,
-    ELSE = 274,
-    ENDIF = 275,
-    SWITCH = 276,
-    CASE = 277,
-    DEFAULT = 278,
-    BREAK = 279,
-    CONTINUE = 280,
-    PLUS = 281,
-    MINUS = 282,
-    MUL = 283,
-    DIV = 284,
-    GTE = 285,
-    LTE = 286,
-    GT = 287,
-    LT = 288,
-    EQ = 289,
-    NE = 290,
-    COLON = 291,
-    DO = 292,
-    FOR = 293,
-    FNUM = 294,
-    INUM = 295,
-    TRUE = 296,
-    FALSE = 297,
-    IDENTIFIER = 298
+    INT = 263,
+    FLOAT = 264,
+    BOOL = 265,
+    AND = 266,
+    OR = 267,
+    NOT = 268,
+    WHILE = 269,
+    IF = 270,
+    THEN = 271,
+    ELSE = 272,
+    ENDIF = 273,
+    SWITCH = 274,
+    CASE = 275,
+    DEFAULT = 276,
+    BREAK = 277,
+    CONTINUE = 278,
+    PLUS = 279,
+    MINUS = 280,
+    MUL = 281,
+    DIV = 282,
+    GTE = 283,
+    LTE = 284,
+    GT = 285,
+    LT = 286,
+    EQ = 287,
+    NE = 288,
+    COLON = 289,
+    DO = 290,
+    FOR = 291,
+    FNUM = 292,
+    INUM = 293,
+    TRUE = 294,
+    FALSE = 295,
+    IDENTIFIER = 296
   };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
+typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 #line 47 "parser.y" /* yacc.c:1909  */
@@ -103,10 +101,8 @@ union YYSTYPE
 	struct exptype *eval;
 	struct num *nval;
 
-#line 107 "parser.tab.h" /* yacc.c:1909  */
+#line 105 "parser.tab.h" /* yacc.c:1909  */
 };
-
-typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

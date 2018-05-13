@@ -40,6 +40,7 @@ vector<int> labels;
 vector<int> loop_labels;
 vector<int> con_labels;
 vector<char*> swID;
+char* jmp;
 %}
 %error-verbose
 //token types used
@@ -163,8 +164,8 @@ statement: assignment
         |do_while_stmt	
         |for_stmt 	
         |switch_stmt    
-        |BREAK          {checkBreak();addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}
-        |CONTINUE  	{checkContinue();addQuad((char*)"goto",iToCa(con_labels.back()),NULL,NULL);}
+        |BREAK          {checkBreak();if(!err){addQuad((char*)"goto",iToCa(loop_labels[loop_labels.size()-2]),NULL,NULL);}}
+        |CONTINUE  	{checkContinue();if(!err){addQuad((char*)"goto",iToCa(con_labels.back()),NULL,NULL);}}
         ;
         
 
@@ -240,7 +241,7 @@ case: CASE inum COLON {
 	statements
 	{addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();}; 
 cases:  | cases case;
-default: DEFAULT COLON statements ;
+default: DEFAULT COLON {push_l();} statements {loop_labels.pop_back();} ;
 
 switch_stmt: SWITCH '(' IDENTIFIER{checkType($3,1,2);swID.push_back(addQuad((char*)"=",$3,NULL,NULL));push_l();} ')'  '{'
 		{sCount++;} s_stmt '}'{sCount--;addQuad((char*)"l",iToCa(loop_labels.back()),NULL,NULL);loop_labels.pop_back();
@@ -272,7 +273,7 @@ int main(int, char**) {
 	types[2]= (char*)"float";
 	types[3]= (char*)"bool";
 	// open a file handle to a particular file:
-	FILE *myfile = fopen("temp.txt", "r");
+	FILE *myfile = fopen("quadTest.txt", "r");
 	// make sure it is valid:
 	if (!myfile) {
 		cout << "I can't open a.snazzle.file!" << endl;
@@ -352,6 +353,18 @@ void printQuads()
 		}
 		else if(q.opr==(char*)"true")
 		{
+			if(jmp==(char*)"JL")
+				jmp=(char*)"JGE";
+			if(jmp==(char*)"JG")
+				jmp=(char*)"JLE";
+			if(jmp==(char*)"JE")
+				jmp=(char*)"JNE";
+			if(jmp==(char*)"JNE")
+				jmp=(char*)"JE";
+			if(jmp==(char*)"JLE")
+				jmp=(char*)"JG";
+			if(jmp==(char*)"JGE")
+				jmp=(char*)"JL";
 			fprintf(file,"if %s goto L%s\n",q.opd2,q.opd1);
 		}
 		else if(q.opr==(char*)"l")
@@ -364,15 +377,69 @@ void printQuads()
 		}
 		else if(q.opr==(char*)"=")
 		{
-			fprintf(file, "%s %s %s\n",q.res,q.opr,q.opd1);
+			fprintf(file, "MOV %s    %s\n",q.opd1,q.res);
 		}
 		else if(q.opr==(char*)"not")
 		{
-			fprintf(file,"%s = %s %s",q.res,q.opr,q.opd1);
+			fprintf(file,"Not %s    %s\n",q.opd1,q.res);
 		}
 		else
 		{
-			fprintf(file,"%s = %s %s %s\n",q.res,q.opd1,q.opr,q.opd2);
+			if(q.opr==(char*)"+")
+			{
+				fprintf(file,"Add ");
+			}
+			else if(q.opr==(char*)"-")
+			{
+				fprintf(file,"Sub ");
+			}
+			else if(q.opr==(char*)"*")
+			{
+				fprintf(file,"Mul ");
+			}
+			else if(q.opr==(char*)"/")
+			{
+				fprintf(file,"Div ");
+			}
+			else if(q.opr==(char*)"and")
+			{
+				fprintf(file,"And ");
+			}
+			else if(q.opr==(char*)"or")
+			{
+				fprintf(file,"Or ");
+			}
+			else if(q.opr==(char*)"<")
+			{
+				fprintf(file,"LT ");
+				jmp=(char*)"JGE";
+			}
+			else if(q.opr==(char*)">")
+			{
+				fprintf(file,"GT ");
+				jmp=(char*)"JLE";
+			}
+			else if(q.opr==(char*)"==")
+			{
+				fprintf(file,"EQ ");
+				jmp=(char*)"JNE";
+			}
+			else if(q.opr==(char*)">=")
+			{
+				fprintf(file,"GE ");
+				jmp=(char*)"JL";
+			}
+			else if(q.opr==(char*)"<=")
+			{
+				fprintf(file,"LE ");
+				jmp=(char*)"JG";
+			}
+			else if(q.opr==(char*)"!=")
+			{
+				fprintf(file,"NE ");
+				jmp=(char*)"JE";
+			}
+			fprintf(file,"%s %s %s\n",q.opd1,q.opd2,q.res);
 		}
 		quads.pop_front();
 	}
